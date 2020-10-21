@@ -10,7 +10,6 @@
 
 # Imports
 import pygame
-import XInput
 import time
 
 # Constants

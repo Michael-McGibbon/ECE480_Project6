@@ -85,5 +85,6 @@ while not done:
 pygame.quit()
 
 #check
-#check2 David
+#check2
 #check3 Michael
+#check4 Jeremy

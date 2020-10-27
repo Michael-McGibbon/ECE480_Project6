@@ -62,9 +62,17 @@ while not done:
             for i in range(hats):
                 hat = joystick.get_hat(i)
                 if (hat != (0,0)):
-                    
+                    if hat == (0,1):
+                        hatValue = 13
+                    elif hat == (0,-1):
+                        hatValue = 10
+                    elif hat == (1,0):
+                        hatValue = 11
+                    elif hat == (-1,0):
+                        hatValue = 12
+
                     #print it for now
-                    print(hat)
+                    print(hatValue)
 
                     #send the hat press to actor.py
                     """

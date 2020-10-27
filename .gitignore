@@ -2,4 +2,6 @@
 # This .gitignore file was automatically created by Microsoft(R) Visual Studio.
 ################################################################################
 
-/.vs/
+/.vs/slnx.sqlite
+/.vs/VSWorkspaceState.json
+#/.vs/ECE480_Project6/v16.suo

@@ -3,7 +3,7 @@
  
  Python application for running a game and transmitting button presses across a cloud service
     
- Author: Jeremy Cowelchuk, (add your names here)
+ Author: Jeremy Cowelchuk, David Geisler, George Legacy (add your names here)
 """
 
 # adding this in, will be added to correct location when needed.
@@ -83,3 +83,9 @@ while not done:
 # If you forget this line, the program will 'hang'
 # on exit if running from IDLE.
 pygame.quit()
+
+#check
+#check2 David
+#check3 Michael
+#check4 Jeremy
+#check5 George

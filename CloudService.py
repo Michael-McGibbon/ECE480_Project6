@@ -6,16 +6,24 @@ Cloud service application which will act as a bridge between the Observer and Ac
 Author: Jeremy Cowelchuk, (add names here)
 """
 
-#imports
-from twisted.internet import protocol, reactor, endpoints
+from twisted.internet.protocol import Factory, Protocol
+from twisted.internet.endpoints import TCP4ServerEndpoint
+from twisted.internet import reactor
 
-class Echo(protocol.Protocol):
-    def dataReceived(self, data):
-        self.transport.write(data)
+class QOTD(Protocol):
 
-class EchoFactory(protocol.Factory):
-    def buildProtocol(self, addr):
-        return Echo()
+    def connectionMade(self):
+        print("client connect")
 
-endpoints.serverFromString(reactor, "tcp:1234").listen(EchoFactory())
+
+class QOTDFactory(Factory):
+
+    # This will be used by the default buildProtocol to create new protocols:
+    protocol = QOTD
+
+
+
+endpoint = TCP4ServerEndpoint(reactor, 8007)
+endpoint.listen(QOTDFactory())
+print("server")
 reactor.run()

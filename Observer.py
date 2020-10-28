@@ -6,6 +6,7 @@
  Author: Jeremy Cowelchuk, David Geisler, George Legacy (add your names here)
 """
 
+"""
 # adding this in, will be added to correct location when needed.
 
 # Imports
@@ -52,9 +53,9 @@ while not done:
                 if button == 1:
                     print(i)
                     #send the button press to actor.py
-                    """
-                    USE TWISTED HERE TO SEND TO ACTOR.PY
-                    """
+                    
+                    #USE TWISTED HERE TO SEND TO ACTOR.PY
+                   
 
         elif event.type == pygame.JOYHATMOTION:
             # handle dpad presses
@@ -75,9 +76,8 @@ while not done:
                     print(hatValue)
 
                     #send the hat press to actor.py
-                    """
-                    USE TWISTED HERE TO SEND TO ACTOR.PY
-                    """
+                    #USE TWISTED HERE TO SEND TO ACTOR.PY
+
 
                 
 
@@ -97,3 +97,19 @@ pygame.quit()
 #check3 Michael
 #check4 Jeremy
 #check5 George
+"""
+
+from twisted.internet import reactor
+from twisted.internet.protocol import Protocol
+from twisted.internet.endpoints import TCP4ClientEndpoint, connectProtocol
+
+class Greeter(Protocol):
+
+    def connectionMade(self):
+        print("connected to server")
+
+
+point = TCP4ClientEndpoint(reactor, "localhost", 8007)
+d = connectProtocol(point, Greeter())
+print("client")
+reactor.run()

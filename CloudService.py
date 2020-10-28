@@ -23,7 +23,7 @@ class QOTDFactory(Factory):
 
 
 
-endpoint = TCP4ServerEndpoint(reactor, 8007)
+endpoint = TCP4ServerEndpoint(reactor, 25565)
 endpoint.listen(QOTDFactory())
 print("server")
 reactor.run()

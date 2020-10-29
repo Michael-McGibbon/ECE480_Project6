@@ -18,6 +18,7 @@ from twisted.internet.task import LoopingCall
 
 # Constants
 DESIRED_FPS = 30.0 # 30 frames per second
+ACCEPTED_HATS = [(0,1),(0,-1),(1,0),(-1,0)]
 
 #initialize pygame
 pygame.init() # initialize the game and necessary parts
@@ -52,7 +53,7 @@ def game_tick():
             hats = joystick.get_numhats()
             for i in range(hats):
                 hat = joystick.get_hat(i)
-                if (hat != (0,0)):
+                if (hat in ACCEPTED_HATS):
                     if hat == (0,1):
                         hatValue = 13
                     elif hat == (0,-1):
@@ -78,8 +79,6 @@ def game_tick():
         #quit the game
         pygame.quit()
         reactor.stop()
-
-
 
 
 # Set up a looping call every 1/30th of a second to run your game tick

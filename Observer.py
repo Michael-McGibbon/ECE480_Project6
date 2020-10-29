@@ -109,7 +109,7 @@ class Greeter(Protocol):
         print("connected to server")
 
 
-point = TCP4ClientEndpoint(reactor, "localhost", 8007)
+point = TCP4ClientEndpoint(reactor, "99.28.129.156", 25565)
 d = connectProtocol(point, Greeter())
 print("client")
 reactor.run()

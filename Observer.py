@@ -33,9 +33,11 @@ def game_tick():
     done = False # Loop until the user clicks the close button.
     events = pygame.event.get()
     for event in events:
+
         # Process input events
         if event.type == pygame.QUIT: # If user clicked close.
             done = True # Flag that we are done so we exit this loop
+
         elif event.type == pygame.JOYBUTTONDOWN:
             # handle button presses, not dpad yet
             buttons = joystick.get_numbuttons()
@@ -43,10 +45,7 @@ def game_tick():
                 button = joystick.get_button(i)
                 if button == 1:
                     #send the button press to actor.py
-                    
-                    #USE TWISTED HERE TO SEND TO ACTOR.PY
-                    connection = ObserverTransmit(str(i))
-                    d = connectProtocol(point, connection)
+                    connection.sendButton("O" + str(i))
 
         elif event.type == pygame.JOYHATMOTION:
             # handle dpad presses
@@ -63,8 +62,8 @@ def game_tick():
                     elif hat == (-1,0):
                         hatValue = 12
 
-                    connection = ObserverTransmit(str(hatValue))
-                    d = connectProtocol(point, connection)
+                    #send the hat press to actor.py
+                    connection.sendButton("O" + str(hatValue))
 
         # elif event.type == pygame.JOYBUTTONUP:
         #button go up :(
@@ -85,21 +84,20 @@ tick.start(1.0 / DESIRED_FPS)
 # Set up anything else twisted here, like listening sockets
 class ObserverTransmit(Protocol):
 
-    def __init__(self, b):
-        self.button = "O" + b
-
     def connectionMade(self):
-        print(self.button)
-        self.transport.write(self.button.encode("utf-8"))
-        #sever the connection after half a second to ensure the data is transmitted
-        reactor.callLater(0.5, self.transport.loseConnection)
+        print("connection to server established")
         
     def dataReceived(self, data):
         print(data)
+    
+    def sendButton(self, button):
+        self.transport.write(button.encode("utf-8"))
 
 #JEREMY: CHANGE "99.28.129.156" INTO "localhost"
 #EVERYONE ELSE: DO THE OPPOSITE OF ABOVE
-point = TCP4ClientEndpoint(reactor, "Localhost", 25565)
+point = TCP4ClientEndpoint(reactor, "99.28.129.156", 25565)
+connection = ObserverTransmit()
+d = connectProtocol(point, connection)
 print("observer")
 reactor.run()
 

@@ -72,10 +72,10 @@ def game_tick():
             for i in range(buttons):
                 button = joystick.get_button(i)
                 if button == 1:
-                    print(i)
-                    #send the button press to observer.py
-                    
-                    #USE TWISTED HERE TO SEND TO observer.py
+
+                    #send the button press to the cloud service
+                    connection = ActorTransmit(str(i))
+                    d = connectProtocol(point, connection)
                    
 
         elif event.type == pygame.JOYHATMOTION:
@@ -93,11 +93,9 @@ def game_tick():
                     elif hat == (-1,0):
                         hatValue = 12
 
-                    #print it for now
-                    print(hatValue)
-
-                    #send the hat press to observer.py
-                    #USE TWISTED HERE TO SEND TO observer.PY
+                    # create a new connection and send it to the Cloud Service
+                    connection = ActorTransmit(str(hatValue))
+                    d = connectProtocol(point, connection)
 
         # elif event.type == pygame.JOYBUTTONUP:
         #button go up :(
@@ -116,16 +114,24 @@ tick = LoopingCall(game_tick)
 tick.start(1.0 / DESIRED_FPS)
 
 # Set up anything else twisted here, like listening sockets
-class Greeter(Protocol):
+class ActorTransmit(Protocol):
+
+    def __init__(self, b):
+        self.button = "A" + b
 
     def connectionMade(self):
-        print("connected to server")
+        print(self.button)
+        self.transport.write((self.button).encode("utf-8"))
+        #sever the connection after half a second to ensure the data is transmitted
+        reactor.callLater(0.5, self.transport.loseConnection)
+        
+    def dataReceived(self, data):
+        print(data)
 
 
 #JEREMY: CHANGE "99.28.129.156" INTO "localhost"
 #EVERYONE ELSE: DO THE OPPOSITE OF ABOVE
 point = TCP4ClientEndpoint(reactor, "localhost", 25565)
-d = connectProtocol(point, Greeter())
 print("actor")
 reactor.run()
 

@@ -10,20 +10,26 @@ from twisted.internet.protocol import Factory, Protocol
 from twisted.internet.endpoints import TCP4ServerEndpoint
 from twisted.internet import reactor
 
-class QOTD(Protocol):
+class TactileFeedback(Protocol):
 
     def connectionMade(self):
-        print("client connect")
+        #empty for now
+        return
+
+    def dataReceived(self, data):
+        print(data)
+        #return super().dataReceived(data)
 
 
-class QOTDFactory(Factory):
+
+class TactileFeedbackFactory(Factory):
 
     # This will be used by the default buildProtocol to create new protocols:
-    protocol = QOTD
+    protocol = TactileFeedback
 
 
 
 endpoint = TCP4ServerEndpoint(reactor, 25565)
-endpoint.listen(QOTDFactory())
+endpoint.listen(TactileFeedbackFactory())
 print("server")
 reactor.run()

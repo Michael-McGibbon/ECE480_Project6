@@ -96,6 +96,6 @@ class Greeter(Protocol):
 #EVERYONE ELSE: DO THE OPPOSITE OF ABOVE
 point = TCP4ClientEndpoint(reactor, "99.28.129.156", 25565)
 d = connectProtocol(point, Greeter())
-print("client")
+print("observer")
 reactor.run()
 

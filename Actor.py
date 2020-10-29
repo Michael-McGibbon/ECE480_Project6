@@ -5,45 +5,30 @@ signal back to the source controller.
 Author: Jeremy Cowelchuk, (add your names here)
 """
 
-# Imports
+# imports
 import pygame
 import time
 
+# twisted imports
+from twisted.internet import reactor
+from twisted.internet.protocol import Protocol
+from twisted.internet.endpoints import TCP4ClientEndpoint, connectProtocol
+from twisted.internet.task import LoopingCall
+
 # Constants
-#HIGHPULSE
-#LOWPULSE
-#LONGPULSE
-#SHORTPULSE
+DESIRED_FPS = 30.0 # 30 frames per second
+ACCEPTED_HATS = [(0,1),(0,-1),(1,0),(-1,0)]
 
+#initialize pygame
+pygame.init() # initialize the game and necessary parts
+screen = pygame.display.set_mode((500, 500)) # Set the width and height of the screen (width, height).
+pygame.display.set_caption("Actor") #name the program
 
-# initialize the game and necessary parts
-pygame.init()
-
-# Set the width and height of the screen (width, height).
-screen = pygame.display.set_mode((500, 500))
-
-pygame.display.set_caption("Actor")
-
-# Loop until the user clicks the close button.
-done = False
-
-# Initialize the joysticks.
-pygame.joystick.init()
-
+pygame.joystick.init() # Initialize the joysticks.
 joystick = pygame.joystick.Joystick(0)
 joystick.init()
 
-"""
-INITIALIZE VARIABLES
-"""
 
-inputSignal = -1 
-
-"""
-FUNCTIONS BELOW
-"""
-
-# The following function reads an integer and generates a coorelating vibration signal
 def GenerateVibration(input):
     if inputSignal == 0:
         print("RECIEVED: 0")
@@ -74,49 +59,31 @@ def GenerateVibration(input):
     elif inputSignal == 13:
         print("RECIEVED: 13")
 
-
-
-# -------- Main Program Loop -----------
-while not done:
-    #
-    # EVENT PROCESSING STEP
-    #
-    # Possible joystick actions: JOYAXISMOTION, JOYBALLMOTION, JOYBUTTONDOWN,
-    # JOYBUTTONUP, JOYHATMOTION
-    for event in pygame.event.get(): # User did something.
-
-        #See if we got anything from the Observer
-        """
-        GET VALUE FROM TWISTED HERE
-        """
-
-       #default the inputSignal so that it can be ignored when it is not a valid value
-        if inputSignal != -1:
-            #Generate the vibration signal if the input is a valid input, then reset it so it doesn't softlock itself
-            GenerateVibration(inputSignal)
-            inputSignal = -1
-
+def game_tick():
+    done = False # Loop until the user clicks the close button.
+    events = pygame.event.get()
+    for event in events:
+        # Process input events
         if event.type == pygame.QUIT: # If user clicked close.
             done = True # Flag that we are done so we exit this loop
         elif event.type == pygame.JOYBUTTONDOWN:
-
             # handle button presses, not dpad yet
             buttons = joystick.get_numbuttons()
             for i in range(buttons):
                 button = joystick.get_button(i)
                 if button == 1:
                     print(i)
-                    #send the button press to actor.py
-                    """
-                    USE TWISTED HERE TO SEND TO ACTOR.PY
-                    """
+                    #send the button press to observer.py
+                    
+                    #USE TWISTED HERE TO SEND TO observer.py
+                   
 
         elif event.type == pygame.JOYHATMOTION:
             # handle dpad presses
             hats = joystick.get_numhats()
             for i in range(hats):
                 hat = joystick.get_hat(i)
-                if (hat != (0,0)):
+                if (hat in ACCEPTED_HATS):
                     if hat == (0,1):
                         hatValue = 13
                     elif hat == (0,-1):
@@ -129,20 +96,39 @@ while not done:
                     #print it for now
                     print(hatValue)
 
-                    #send the hat press to actor.py
-                    """
-                    USE TWISTED HERE TO SEND TO ACTOR.PY
-                    """
+                    #send the hat press to observer.py
+                    #USE TWISTED HERE TO SEND TO observer.PY
 
-                
+        # elif event.type == pygame.JOYBUTTONUP:
+        #button go up :(
+    
+        
+    #redraw()
 
-                       
-       # elif event.type == pygame.JOYBUTTONUP:
-            #button go up :(
+    if done == True:
+        #quit the game
+        pygame.quit()
+        reactor.stop()
 
 
-  
-# Close the window and quit.
-# If you forget this line, the program will 'hang'
-# on exit if running from IDLE.
-pygame.quit()
+# Set up a looping call every 1/30th of a second to run your game tick
+tick = LoopingCall(game_tick)
+tick.start(1.0 / DESIRED_FPS)
+
+# Set up anything else twisted here, like listening sockets
+class Greeter(Protocol):
+
+    def connectionMade(self):
+        print("connected to server")
+
+
+#JEREMY: CHANGE "99.28.129.156" INTO "localhost"
+#EVERYONE ELSE: DO THE OPPOSITE OF ABOVE
+point = TCP4ClientEndpoint(reactor, "localhost", 25565)
+d = connectProtocol(point, Greeter())
+print("actor")
+reactor.run()
+
+
+
+

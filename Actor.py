@@ -74,9 +74,7 @@ def game_tick():
                 if button == 1:
 
                     #send the button press to the cloud service
-                    connection = ActorTransmit(str(i))
-                    d = connectProtocol(point, connection)
-                   
+                    connection.sendButton("A" + str(i))
 
         elif event.type == pygame.JOYHATMOTION:
             # handle dpad presses
@@ -94,8 +92,7 @@ def game_tick():
                         hatValue = 12
 
                     # create a new connection and send it to the Cloud Service
-                    connection = ActorTransmit(str(hatValue))
-                    d = connectProtocol(point, connection)
+                    connection.sendButton("A" + str(hatValue))
 
         # elif event.type == pygame.JOYBUTTONUP:
         #button go up :(
@@ -116,22 +113,21 @@ tick.start(1.0 / DESIRED_FPS)
 # Set up anything else twisted here, like listening sockets
 class ActorTransmit(Protocol):
 
-    def __init__(self, b):
-        self.button = "A" + b
-
     def connectionMade(self):
-        print(self.button)
-        self.transport.write((self.button).encode("utf-8"))
-        #sever the connection after half a second to ensure the data is transmitted
-        reactor.callLater(0.5, self.transport.loseConnection)
-        
+        print("Connetion to server established")
+
     def dataReceived(self, data):
         print(data)
+
+    def sendButton(self, button):
+        self.transport.write(button.encode("utf-8"))
 
 
 #JEREMY: CHANGE "99.28.129.156" INTO "localhost"
 #EVERYONE ELSE: DO THE OPPOSITE OF ABOVE
-point = TCP4ClientEndpoint(reactor, "localhost", 25565)
+point = TCP4ClientEndpoint(reactor, "99.28.129.156", 25565)
+connection = ActorTransmit()
+d = connectProtocol(point, connection)
 print("actor")
 reactor.run()
 

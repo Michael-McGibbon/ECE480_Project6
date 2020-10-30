@@ -12,13 +12,25 @@ from twisted.internet import reactor
 
 class TactileFeedback(Protocol):
 
+    def __init__(self, factory):
+        self.factory = factory
+
     def connectionMade(self):
-        #empty for now
-        return
+        print("Connection Established")
+        self.transport.write(b"Connection Established to Server")
+        self.factory.connections.append(self)
 
     def dataReceived(self, data):
-        print(data)
-        #return super().dataReceived(data)
+        decoded_data = data.decode()
+        if decoded_data[0] == "A":
+            self.factory.connections[0].transport.write(data)
+        elif decoded_data[0] == "O":
+            self.factory.connections[1].transport.write(data)
+
+
+    def connectionLost(self, reason):
+        print("Disconnect")
+        self.factory.connections.remove(self)
 
 
 
@@ -26,6 +38,12 @@ class TactileFeedbackFactory(Factory):
 
     # This will be used by the default buildProtocol to create new protocols:
     protocol = TactileFeedback
+
+    def __init__(self):
+        self.connections = []
+
+    def buildProtocol(self, addr):
+        return TactileFeedback(self)
 
 
 

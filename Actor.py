@@ -8,6 +8,7 @@ Author: Jeremy Cowelchuk, (add your names here)
 # imports
 import pygame
 import time
+import XInput
 
 # twisted imports
 from twisted.internet import reactor
@@ -19,6 +20,12 @@ from twisted.internet.task import LoopingCall
 DESIRED_FPS = 30.0 # 30 frames per second
 ACCEPTED_HATS = [(0,1),(0,-1),(1,0),(-1,0)]
 
+SHORT_DELAY = 0.17
+LONG_DELAY = 0.33
+
+HIGH_INTENSITY = 1.0
+NO_INTENSITY = 0.0
+
 #initialize pygame
 pygame.init() # initialize the game and necessary parts
 screen = pygame.display.set_mode((500, 500)) # Set the width and height of the screen (width, height).
@@ -29,35 +36,42 @@ joystick = pygame.joystick.Joystick(0)
 joystick.init()
 
 
-def GenerateVibration(input):
-    if inputSignal == 0:
-        print("RECIEVED: 0")
+def GenerateVibration(inputSignal):
+    if inputSignal == "0":
+                        XInput.set_vibration( 0, HIGH_INTENSITY, HIGH_INTENSITY)
+                        time.sleep(SHORT_DELAY)
+                        XInput.set_vibration( 0, NO_INTENSITY, NO_INTENSITY)
+                        time.sleep(SHORT_DELAY)
+                        XInput.set_vibration( 0, HIGH_INTENSITY, HIGH_INTENSITY)
+                        time.sleep(SHORT_DELAY)
     elif inputSignal == 1:
         print("RECIEVED: 1")
-    elif inputSignal == 2:
+    elif inputSignal == "2":
         print("RECIEVED: 2")
-    elif inputSignal == 3:
+    elif inputSignal == "3":
         print("RECIEVED: 3")
-    elif inputSignal == 4:
+    elif inputSignal == "4":
         print("RECIEVED: 4")
-    elif inputSignal == 5:
+    elif inputSignal == "5":
         print("RECIEVED: 5")
-    elif inputSignal == 6:
+    elif inputSignal == "6":
         print("RECIEVED: 6")
-    elif inputSignal == 7:
+    elif inputSignal == "7":
         print("RECIEVED: 7")
-    elif inputSignal == 8:
+    elif inputSignal == "8":
         print("RECIEVED: 8")
-    elif inputSignal == 9:
+    elif inputSignal == "9":
         print("RECIEVED: 9")
-    elif inputSignal == 10:
+    elif inputSignal == "10":
         print("RECIEVED: 10")
-    elif inputSignal == 11:
+    elif inputSignal == "11":
         print("RECIEVED: 11")
-    elif inputSignal == 12:
+    elif inputSignal == "12":
         print("RECIEVED: 12")
-    elif inputSignal == 13:
+    elif inputSignal == "13":
         print("RECIEVED: 13")
+    #turn off the controller
+    XInput.set_vibration(0,0,0)
 
 def game_tick():
     done = False # Loop until the user clicks the close button.

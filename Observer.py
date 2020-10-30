@@ -95,7 +95,7 @@ class ObserverTransmit(Protocol):
 
 #JEREMY: CHANGE "99.28.129.156" INTO "localhost"
 #EVERYONE ELSE: DO THE OPPOSITE OF ABOVE
-point = TCP4ClientEndpoint(reactor, "99.28.129.156", 25565)
+point = TCP4ClientEndpoint(reactor, "localhost", 25565)
 connection = ObserverTransmit()
 d = connectProtocol(point, connection)
 print("observer")

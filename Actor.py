@@ -20,8 +20,7 @@ from twisted.internet.task import LoopingCall
 DESIRED_FPS = 30.0 # 30 frames per second
 ACCEPTED_HATS = [(0,1),(0,-1),(1,0),(-1,0)]
 
-SHORT_DELAY = 0.17
-LONG_DELAY = 0.33
+DELAY = 0.25
 
 HIGH_INTENSITY = 1.0
 LOW_INTENSITY = 0.125
@@ -46,24 +45,24 @@ def GenerateVibration(intensity, duration, delay):
 def DecodeInput(inputSignal):
     if inputSignal == "0":
         # low - low - low
-        GenerateVibration(LOW_INTENSITY, SHORT_DELAY, SHORT_DELAY)
-        GenerateVibration(LOW_INTENSITY, SHORT_DELAY, SHORT_DELAY)
-        GenerateVibration(LOW_INTENSITY, SHORT_DELAY, SHORT_DELAY)
+        GenerateVibration(LOW_INTENSITY, DELAY, DELAY)
+        GenerateVibration(LOW_INTENSITY, DELAY, DELAY)
+        GenerateVibration(LOW_INTENSITY, DELAY, DELAY)
     elif inputSignal == "1":
         # low - low - high
-        GenerateVibration(LOW_INTENSITY, SHORT_DELAY, SHORT_DELAY)
-        GenerateVibration(LOW_INTENSITY, SHORT_DELAY, SHORT_DELAY)
-        GenerateVibration(HIGH_INTENSITY, SHORT_DELAY, SHORT_DELAY)
+        GenerateVibration(LOW_INTENSITY, DELAY, DELAY)
+        GenerateVibration(LOW_INTENSITY, DELAY, DELAY)
+        GenerateVibration(HIGH_INTENSITY, DELAY, DELAY)
     elif inputSignal == "2":
         # low - high - low
-        GenerateVibration(LOW_INTENSITY, SHORT_DELAY, SHORT_DELAY)
-        GenerateVibration(HIGH_INTENSITY, SHORT_DELAY, SHORT_DELAY)
-        GenerateVibration(LOW_INTENSITY, SHORT_DELAY, SHORT_DELAY)
+        GenerateVibration(LOW_INTENSITY, DELAY, DELAY)
+        GenerateVibration(HIGH_INTENSITY, DELAY, DELAY)
+        GenerateVibration(LOW_INTENSITY, DELAY, DELAY)
     elif inputSignal == "3":
         # low - high - high
-        GenerateVibration(LOW_INTENSITY, SHORT_DELAY, SHORT_DELAY)
-        GenerateVibration(HIGH_INTENSITY, SHORT_DELAY, SHORT_DELAY)
-        GenerateVibration(HIGH_INTENSITY, SHORT_DELAY, SHORT_DELAY)
+        GenerateVibration(LOW_INTENSITY, DELAY, DELAY)
+        GenerateVibration(HIGH_INTENSITY, DELAY, DELAY)
+        GenerateVibration(HIGH_INTENSITY, DELAY, DELAY)
     elif inputSignal == "4":
         print("RECIEVED: 4")
     elif inputSignal == "5":
@@ -78,24 +77,24 @@ def DecodeInput(inputSignal):
         print("RECIEVED: 9")
     elif inputSignal == "10":
         # high - high - high
-        GenerateVibration(HIGH_INTENSITY, SHORT_DELAY, SHORT_DELAY)
-        GenerateVibration(HIGH_INTENSITY, SHORT_DELAY, SHORT_DELAY)
-        GenerateVibration(HIGH_INTENSITY, SHORT_DELAY, SHORT_DELAY)
+        GenerateVibration(HIGH_INTENSITY, DELAY, DELAY)
+        GenerateVibration(HIGH_INTENSITY, DELAY, DELAY)
+        GenerateVibration(HIGH_INTENSITY, DELAY, DELAY)
     elif inputSignal == "11":
         # high - high - low
-        GenerateVibration(HIGH_INTENSITY, SHORT_DELAY, SHORT_DELAY)
-        GenerateVibration(HIGH_INTENSITY, SHORT_DELAY, SHORT_DELAY)
-        GenerateVibration(LOW_INTENSITY, SHORT_DELAY, SHORT_DELAY)
+        GenerateVibration(HIGH_INTENSITY, DELAY, DELAY)
+        GenerateVibration(HIGH_INTENSITY, DELAY, DELAY)
+        GenerateVibration(LOW_INTENSITY, DELAY, DELAY)
     elif inputSignal == "12":
         # high - low - high
-        GenerateVibration(HIGH_INTENSITY, SHORT_DELAY, SHORT_DELAY)
-        GenerateVibration(LOW_INTENSITY, SHORT_DELAY, SHORT_DELAY)
-        GenerateVibration(HIGH_INTENSITY, SHORT_DELAY, SHORT_DELAY)
+        GenerateVibration(HIGH_INTENSITY, DELAY, DELAY)
+        GenerateVibration(LOW_INTENSITY, DELAY, DELAY)
+        GenerateVibration(HIGH_INTENSITY, DELAY, DELAY)
     elif inputSignal == "13":
         # high - low - low
-        GenerateVibration(HIGH_INTENSITY, SHORT_DELAY, SHORT_DELAY)
-        GenerateVibration(LOW_INTENSITY, SHORT_DELAY, SHORT_DELAY)
-        GenerateVibration(LOW_INTENSITY, SHORT_DELAY, SHORT_DELAY)
+        GenerateVibration(HIGH_INTENSITY, DELAY, DELAY)
+        GenerateVibration(LOW_INTENSITY, DELAY, DELAY)
+        GenerateVibration(LOW_INTENSITY, DELAY, DELAY)
 
 
 def game_tick():

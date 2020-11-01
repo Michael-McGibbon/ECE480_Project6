@@ -4,12 +4,16 @@
 # Button Icons from: https://www.nicepng.com/ourpic/u2w7i1i1u2q8q8a9_xbox-360-icon-opengameart-xbox-controller-button-icons/
 
 import pygame
+import XInput
+import random
 
-# Initiazlie the Game
+# Initialize the Game
 pygame.init()
 
 # Create the Screen
-screen = pygame.display.set_mode((500, 500))
+screenx = 500
+screeny = 500
+screen = pygame.display.set_mode((screenx, screeny))
 
 # Import the Images
 xbutton = pygame.image.load('Xbutton.png')
@@ -22,7 +26,6 @@ leftbutton = pygame.image.load('LEFTbutton.png')
 rightbutton = pygame.image.load('RIGHTbutton.png')
 msuhat = pygame.image.load('msuhat.png')
 
-
 # Title & Icon
 pygame.display.set_caption("George's Go at Dance Dance")
 icon = pygame.image.load('HATlab.png')
@@ -34,12 +37,13 @@ msuhaty = 0
 def sponsor():
     screen.blit(msuhat, (msuhatx, msuhaty))
 
-#Active Button
-activebuttonx = 186   
-activebuttony = 186
+# Active Button Location
+activebuttonx = (screenx/2)-64 
+activebuttony = (screeny/2)-64 
+activebuttonychange = 0
 
-def player():
-    screen.blit(xbutton, (activebuttonx, activebuttony))
+def activebutton(x,y):
+    screen.blit(upbutton, (x, y))
 
 # Game loop
 running = True
@@ -51,8 +55,20 @@ while running:
         if event.type == pygame.QUIT:
             running = False
 
-    player()
+    # If keystroke pressed - check whether if up or down
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_UP:
+                activebuttonychange = -0.5         
+            if event.key == pygame.K_DOWN:
+                activebuttonychange = 0.5
+        if event.type ==pygame.KEYUP:
+            if event.key == pygame.K_UP or event.key == pygame.K_DOWN:
+                activebuttonychange = 0
+    activebuttony += activebuttonychange
+    activebutton(activebuttonx, activebuttony)
     sponsor()
 
     pygame.display.update()
+
+
 

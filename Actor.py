@@ -20,10 +20,10 @@ from twisted.internet.task import LoopingCall
 DESIRED_FPS = 30.0 # 30 frames per second
 ACCEPTED_HATS = [(0,1),(0,-1),(1,0),(-1,0)]
 
-SHORT_DELAY = 0.17
-LONG_DELAY = 0.33
+DELAY = 0.25
 
 HIGH_INTENSITY = 1.0
+LOW_INTENSITY = 0.125
 NO_INTENSITY = 0.0
 
 #initialize pygame
@@ -36,20 +36,33 @@ joystick = pygame.joystick.Joystick(0)
 joystick.init()
 
 
-def GenerateVibration(inputSignal):
+def GenerateVibration(intensity, duration, delay):
+    XInput.set_vibration(0, intensity, intensity)
+    time.sleep(duration)
+    XInput.set_vibration(0, NO_INTENSITY, NO_INTENSITY)
+    time.sleep(delay)
+
+def DecodeInput(inputSignal):
     if inputSignal == "0":
-                        XInput.set_vibration( 0, HIGH_INTENSITY, HIGH_INTENSITY)
-                        time.sleep(SHORT_DELAY)
-                        XInput.set_vibration( 0, NO_INTENSITY, NO_INTENSITY)
-                        time.sleep(SHORT_DELAY)
-                        XInput.set_vibration( 0, HIGH_INTENSITY, HIGH_INTENSITY)
-                        time.sleep(SHORT_DELAY)
-    elif inputSignal == 1:
-        print("RECIEVED: 1")
+        # low - low - low
+        GenerateVibration(LOW_INTENSITY, DELAY, DELAY)
+        GenerateVibration(LOW_INTENSITY, DELAY, DELAY)
+        GenerateVibration(LOW_INTENSITY, DELAY, DELAY)
+    elif inputSignal == "1":
+        # low - low - high
+        GenerateVibration(LOW_INTENSITY, DELAY, DELAY)
+        GenerateVibration(LOW_INTENSITY, DELAY, DELAY)
+        GenerateVibration(HIGH_INTENSITY, DELAY, DELAY)
     elif inputSignal == "2":
-        print("RECIEVED: 2")
+        # low - high - low
+        GenerateVibration(LOW_INTENSITY, DELAY, DELAY)
+        GenerateVibration(HIGH_INTENSITY, DELAY, DELAY)
+        GenerateVibration(LOW_INTENSITY, DELAY, DELAY)
     elif inputSignal == "3":
-        print("RECIEVED: 3")
+        # low - high - high
+        GenerateVibration(LOW_INTENSITY, DELAY, DELAY)
+        GenerateVibration(HIGH_INTENSITY, DELAY, DELAY)
+        GenerateVibration(HIGH_INTENSITY, DELAY, DELAY)
     elif inputSignal == "4":
         print("RECIEVED: 4")
     elif inputSignal == "5":
@@ -63,15 +76,26 @@ def GenerateVibration(inputSignal):
     elif inputSignal == "9":
         print("RECIEVED: 9")
     elif inputSignal == "10":
-        print("RECIEVED: 10")
+        # high - high - high
+        GenerateVibration(HIGH_INTENSITY, DELAY, DELAY)
+        GenerateVibration(HIGH_INTENSITY, DELAY, DELAY)
+        GenerateVibration(HIGH_INTENSITY, DELAY, DELAY)
     elif inputSignal == "11":
-        print("RECIEVED: 11")
+        # high - high - low
+        GenerateVibration(HIGH_INTENSITY, DELAY, DELAY)
+        GenerateVibration(HIGH_INTENSITY, DELAY, DELAY)
+        GenerateVibration(LOW_INTENSITY, DELAY, DELAY)
     elif inputSignal == "12":
-        print("RECIEVED: 12")
+        # high - low - high
+        GenerateVibration(HIGH_INTENSITY, DELAY, DELAY)
+        GenerateVibration(LOW_INTENSITY, DELAY, DELAY)
+        GenerateVibration(HIGH_INTENSITY, DELAY, DELAY)
     elif inputSignal == "13":
-        print("RECIEVED: 13")
-    #turn off the controller
-    XInput.set_vibration(0,0,0)
+        # high - low - low
+        GenerateVibration(HIGH_INTENSITY, DELAY, DELAY)
+        GenerateVibration(LOW_INTENSITY, DELAY, DELAY)
+        GenerateVibration(LOW_INTENSITY, DELAY, DELAY)
+
 
 def game_tick():
     done = False # Loop until the user clicks the close button.
@@ -133,7 +157,7 @@ class ActorTransmit(Protocol):
     def dataReceived(self, data):
         decoded_data = data.decode()
         button = decoded_data[1:]
-        GenerateVibration(button)
+        DecodeInput(button)
 
     def sendButton(self, button):
         self.transport.write(button.encode("utf-8"))

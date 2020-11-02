@@ -152,12 +152,15 @@ tick.start(1.0 / DESIRED_FPS)
 class ActorTransmit(Protocol):
 
     def connectionMade(self):
-        print("Connetion to server established")
+        #self.transport.write(b"Actor Connected")
+        pass
 
     def dataReceived(self, data):
         decoded_data = data.decode()
-        button = decoded_data[1:]
-        DecodeInput(button)
+        if decoded_data[1:].isnumeric():
+            DecodeInput(decoded_data[1:])
+        else:
+            print(decoded_data)
 
     def sendButton(self, button):
         self.transport.write(button.encode("utf-8"))

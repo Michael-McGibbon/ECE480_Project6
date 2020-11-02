@@ -16,8 +16,9 @@ class TactileFeedback(Protocol):
         self.factory = factory
 
     def connectionMade(self):
-        print("Connection Established")
         self.factory.connections.append(self)
+        print("Connection Established: {} Total".format(len(self.factory.connections)))
+        self.transport.write(b"Connection Established to Server")
 
     def dataReceived(self, data):
         decoded_data = data.decode()
@@ -28,8 +29,8 @@ class TactileFeedback(Protocol):
 
 
     def connectionLost(self, reason):
-        print("Disconnect")
         self.factory.connections.remove(self)
+        print("Connection Lost: {} Total".format(len(self.factory.connections)))
 
 
 

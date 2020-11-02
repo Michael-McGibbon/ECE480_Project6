@@ -94,11 +94,15 @@ tick.start(1.0 / DESIRED_FPS)
 class ObserverTransmit(Protocol):
 
     def connectionMade(self):
-        print("connection to server established")
-        
+       # self.transport.write(b"Observer Connected")
+        pass
+
     def dataReceived(self, data):
-        decoded_data = data.decode()[1:]
-        VerifyButton(int(decoded_data))
+        decoded_data = data.decode()
+        if decoded_data[1:].isnumeric(): 
+            VerifyButton(int(decoded_data[1:]))
+        else:
+            print(decoded_data)
     
     def sendButton(self, button):
         self.transport.write(button.encode("utf-8"))

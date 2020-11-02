@@ -29,8 +29,15 @@ pygame.joystick.init() # Initialize the joysticks.
 joystick = pygame.joystick.Joystick(0)
 joystick.init()
 
+def VerifyButton(button):
+    if pressed_button == button:
+        print("Correct Button")
+    else:
+        print("Incorrect Button")
+
 def game_tick():
     done = False # Loop until the user clicks the close button.
+    global pressed_button
     events = pygame.event.get()
     for event in events:
 
@@ -46,6 +53,7 @@ def game_tick():
                 if button == 1:
                     #send the button press to actor.py
                     connection.sendButton("O" + str(i))
+                    pressed_button = i
 
         elif event.type == pygame.JOYHATMOTION:
             # handle dpad presses
@@ -64,6 +72,7 @@ def game_tick():
 
                     #send the hat press to actor.py
                     connection.sendButton("O" + str(hatValue))
+                    pressed_button = hatValue
 
         # elif event.type == pygame.JOYBUTTONUP:
         #button go up :(
@@ -88,7 +97,8 @@ class ObserverTransmit(Protocol):
         print("connection to server established")
         
     def dataReceived(self, data):
-        print(data)
+        decoded_data = data.decode()[1:]
+        VerifyButton(int(decoded_data))
     
     def sendButton(self, button):
         self.transport.write(button.encode("utf-8"))

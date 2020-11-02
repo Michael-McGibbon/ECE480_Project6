@@ -17,7 +17,6 @@ class TactileFeedback(Protocol):
 
     def connectionMade(self):
         print("Connection Established")
-        self.transport.write(b"Connection Established to Server")
         self.factory.connections.append(self)
 
     def dataReceived(self, data):

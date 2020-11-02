@@ -3,7 +3,7 @@
  
  Python application for running a game and transmitting button presses across a cloud service
     
- Author: Jeremy Cowelchuk, David Geisler, George Legacy (add your names here)
+ Author: Jeremy Cowelchuk, David Geisler, George Legacy, Michael McGibbon (add your names here)
 """
 
 # imports

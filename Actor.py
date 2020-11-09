@@ -13,7 +13,7 @@ import pygame
 import time
 import random
 import XInput
-
+import constants
 # twisted imports
 from twisted.internet import reactor
 from twisted.internet.protocol import Protocol
@@ -43,6 +43,34 @@ INCORRECT = 0
 DANCINGSPRITEX = (SCREENX/2)-64 
 DANCINGSPRITEY = (SCREENY-200)
 
+
+"""Get individual sprites from sprite sheets"""
+ 
+class SpriteSheet(object):
+#use to get images from a sprite sheet.
+ 
+    def __init__(self, file_name):
+        #Pass the file name of the sprite sheet.
+ 
+        # Load the sprite sheet.
+        self.sprite_sheet = pygame.image.load(file_name).convert()
+ 
+ 
+    def get_image(self, x, y, width, height):
+        """ get a single sprite from a spritesheet
+            pass x, y coordinates of sprite
+            and width and height of the sprite. """
+ 
+        # make new blank image
+        image = pygame.Surface([width, height]).convert()
+ 
+        # copy sprite from spritesheet onto smaller image
+        image.blit(self.sprite_sheet, (0, 0), (x, y, width, height))
+ 
+        #transparent color (set as black)
+        image.set_colorkey(constants.BLACK)
+ 
+        return image
 # Import Images
 I2 = pygame.image.load('ImageFiles/Xbutton.png')
 I3 = pygame.image.load('ImageFiles/Ybutton.png')
@@ -224,7 +252,7 @@ class ActorTransmit(Protocol):
 
 #JEREMY: CHANGE "99.28.129.156" INTO "localhost"
 #EVERYONE ELSE: DO THE OPPOSITE OF ABOVE
-point = TCP4ClientEndpoint(reactor, "localhost", 25565)
+point = TCP4ClientEndpoint(reactor, "99.28.129.156", 25565)
 connection = ActorTransmit()
 d = connectProtocol(point, connection)
 print("actor")

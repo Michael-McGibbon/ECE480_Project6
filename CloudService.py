@@ -6,6 +6,12 @@ Cloud service application which will act as a bridge between the Observer and Ac
 Author: Jeremy Cowelchuk, (add names here)
 """
 
+#import requests
+#from requests import get
+
+#ip = get('https://api.ipify.org').text
+#print('IP Address for Server: {}'.format(ip)) 
+
 from twisted.internet.protocol import Factory, Protocol
 from twisted.internet.endpoints import TCP4ServerEndpoint
 from twisted.internet import reactor

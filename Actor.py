@@ -3,8 +3,10 @@ Actor.py
 Python application for recieving button input from another controller, reading them as vibrations and then sending an interpreted
 signal back to the source controller.
 Author: Jeremy Cowelchuk, (add your names here)
-"""
+
 # Background Image: https://depositphotos.com/stock-photos/dancefloor.html?qview=9919783 - Will need to find roalty free :) 
+"""
+
 
 # imports
 import pygame
@@ -79,7 +81,7 @@ def sponsor():
 # Dancing Sprite
 def dancer(x,y):
     screen.blit(random.choice(dance), (x,y))
-    time.sleep(.25)
+    time.sleep(.1)
 
 
 def GenerateVibration(intensity, duration, delay):

@@ -1,5 +1,14 @@
+"""
+GameDemo2.py
+ 
+ Python application for running a game and transmitting button presses across a cloud service
+    
+ Author: Jeremy Cowelchuk, David Geisler, George Legacy, Michael McGibbon (add your names here)
+
+ 
 # Button Icons from: https://www.nicepng.com/ourpic/u2w7i1i1u2q8q8a9_xbox-360-icon-opengameart-xbox-controller-button-icons/ - In the process of being made ourselves :)
 # Background Image: https://depositphotos.com/stock-photos/dancefloor.html?qview=9919783 - Will need to find roalty free :) 
+"""
 
 # imports
 import pygame
@@ -86,7 +95,7 @@ def buttonimage(x,y):
 # Dancing Sprite
 def dancer(x,y):
     screen.blit(random.choice(dance), (x,y))
-    time.sleep(.25)
+    time.sleep(.1)
 
 # Button Verification 
 def VerifyButton(button):

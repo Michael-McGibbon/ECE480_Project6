@@ -101,8 +101,10 @@ def dancer(x,y):
 def VerifyButton(button):
     global CORRECT
     global INCORRECT 
+    global active
     if pressed_button == button:
         CORRECT += 1
+        active = random.choice(imagelist)
     else:
         INCORRECT += 1
 

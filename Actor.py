@@ -102,6 +102,17 @@ pygame.joystick.init() # Initialize the joysticks.
 joystick = pygame.joystick.Joystick(0)
 joystick.init()
 
+# Scoring Data
+font = pygame.font.Font('freesansbold.ttf', 20)
+
+def scorecorrect(x,y):
+    corrscore = font.render("Correct: " + str(CORRECT), True, (255,255,255))
+    screen.blit(corrscore, (x, y))
+
+def scoreincorrect(x,y):
+    incorrscore = font.render("Incorrect: " + str(INCORRECT), True, (255,255,255))
+    screen.blit(incorrscore, (x, y))
+
 # MSU HATLab Logo
 def sponsor():
     screen.blit(msuhat, (0, 0))
@@ -220,6 +231,8 @@ def game_tick():
 
     sponsor()
     dancer(DANCINGSPRITEX, DANCINGSPRITEY)
+    scorecorrect(CORRECTSCOREX, CORRECTSCOREY)
+    scoreincorrect(INCORRECTSCOREX, INCORRECTSCOREY)
     pygame.display.update()
 
     if done == True:
@@ -252,7 +265,7 @@ class ActorTransmit(Protocol):
 
 #JEREMY: CHANGE "99.28.129.156" INTO "localhost"
 #EVERYONE ELSE: DO THE OPPOSITE OF ABOVE
-point = TCP4ClientEndpoint(reactor, "99.28.129.156", 25565)
+point = TCP4ClientEndpoint(reactor, "localhost", 25565)
 connection = ActorTransmit()
 d = connectProtocol(point, connection)
 print("actor")

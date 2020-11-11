@@ -35,7 +35,25 @@ def VerifyButton(button):
     else:
         print("Incorrect Button")
 
+def DataCollection(button):
+    df = pd.Dataframe(index-index, column=['Intended Button', 'Pressed Button','Correct/Incorrect', 'Time','Total Buttons Pressed'])
+    a = 0
+    df(a, 'Intended Button', button)
+    df(a, 'Pressed Button', pressed_button)
+    if pressed_button == button:
+        df(a,'Correct/Incorrect', 'Correct')
+        
+        a += 1
+    else:
+        df(a,'Correct/Incorrect', 'Incorrect')
+        a += 1
+
+    if done == True:
+        df(1, 'Total Buttons Pressed', a)
+        df.to_excel("Data.xlsx")
+
 def game_tick():
+    global done
     done = False # Loop until the user clicks the close button.
     global pressed_button
     events = pygame.event.get()

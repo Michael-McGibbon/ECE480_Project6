@@ -68,7 +68,7 @@ class Actor():
         self.import_images()
 
         # prepare all twisted
-        self.point = TCP4ClientEndpoint(reactor, "localhost", 25565)
+        self.point = TCP4ClientEndpoint(reactor, "99.28.129.156", 25565)
         self.connection = ActorTransmit(self)
 
     def import_images(self):

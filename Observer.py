@@ -15,7 +15,7 @@ import pygame
 import time
 import random
 import XInput
-from pandas import pd
+import pandas 
 
 # twisted imports
 from twisted.internet import reactor
@@ -80,7 +80,7 @@ class Observer():
         # set up twisted end point and connection channel
             #JEREMY: CHANGE "99.28.129.156" INTO "localhost"
             #EVERYONE ELSE: DO THE OPPOSITE OF ABOVE
-        self.point = TCP4ClientEndpoint(reactor, "localhost", 25565)
+        self.point = TCP4ClientEndpoint(reactor, "99.28.129.156", 25565)
         self.connection = ObserverTransmit(self)
 
     def import_images(self):
@@ -142,20 +142,22 @@ class Observer():
         self.DataCollection(button)
 
     def DataCollection(self, button):
-        df = pd.Dataframe(index-index, column=['Intended Button', 'Pressed Button','Correct/Incorrect', 'Time','Total Buttons Pressed'])
+        df = pandas.DataFrame(columns=['Intended Button', 'Pressed Button','Correct/Incorrect', 'Time','Total Buttons Pressed'])
         a = 0
-        df(a, 'Intended Button', self.pressedButton)
-        df(a, 'Pressed Button', button)
+        #df = df.append({'Intended Button'})
+        #df(a, 'Intended Button', self.pressedButton)
+        #df(a, 'Pressed Button', button)
         if self.pressedButton == button:
             df(a,'Correct/Incorrect', 'Correct')
-        
+            df = df.append({'Intended Button': self.pressedButton, 'Pressed Button': button, 'Correct/Incorrect': 'Correct'}, ignore_index=True)
             a += 1
         else:
-            df(a,'Correct/Incorrect', 'Incorrect')
+            #df(a,'Correct/Incorrect', 'Incorrect')
+            df = df.append({'Intended Button': self.pressedButton, 'Pressed Button': button, 'Correct/Incorrect': 'Incorrect'}, ignore_index=True)
             a += 1
 
         if self.done == True:
-            df(1, 'Total Buttons Pressed', a)
+            #df(1, 'Total Buttons Pressed', a)
             df.to_excel("Data.xlsx")
 
     def game_tick(self):

@@ -45,7 +45,7 @@ DANCINGSPRITEY = (SCREENY-200)
 
 
 class Actor():
-    def __init__(self):
+    def __init__(self, ip):
         self.recievedButton = -1
         self.correct = 0
         self.incorrect = 0
@@ -68,7 +68,7 @@ class Actor():
         self.import_images()
 
         # prepare all twisted
-        self.point = TCP4ClientEndpoint(reactor, "localhost", 25565)
+        self.point = TCP4ClientEndpoint(reactor, ip, 25565)
         self.connection = ActorTransmit(self)
 
     def import_images(self):
@@ -292,8 +292,10 @@ class ActorTransmit(Protocol):
 
 
 def main():
-
-    actor = Actor()
+    #JEREMY: CHANGE "99.28.129.156" INTO "localhost"
+    #EVERYONE ELSE: DO THE OPPOSITE OF ABOVE
+    ip = "99.28.129.156"
+    actor = Actor(ip)
     actor.Run()
 
 

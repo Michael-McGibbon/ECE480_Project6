@@ -15,7 +15,7 @@ import pygame
 import time
 import random
 import XInput
-import pandas 
+import pandas as pd
 
 # twisted imports
 from twisted.internet import reactor
@@ -76,6 +76,9 @@ class Observer():
 
         #set current button
         self.activeButton = random.choice(self.imagelist)
+
+        #set up pandas for data collection
+        self.df = pd.DataFrame(columns=['Intended Button', 'Pressed Button','Correct/Incorrect', 'Time','Total Buttons Pressed'])
 
         # set up twisted end point and connection channel
             #JEREMY: CHANGE "99.28.129.156" INTO "localhost"
@@ -139,26 +142,24 @@ class Observer():
             self.activeButton = random.choice(self.imagelist)
         else:
             self.incorrect += 1
-        self.DataCollection(button)
+        self.CollectData(button)
 
-    def DataCollection(self, button):
-        df = pandas.DataFrame(columns=['Intended Button', 'Pressed Button','Correct/Incorrect', 'Time','Total Buttons Pressed'])
-        a = 0
+    def CollectData(self, button):
+
         #df = df.append({'Intended Button'})
         #df(a, 'Intended Button', self.pressedButton)
         #df(a, 'Pressed Button', button)
         if self.pressedButton == button:
-            df(a,'Correct/Incorrect', 'Correct')
-            df = df.append({'Intended Button': self.pressedButton, 'Pressed Button': button, 'Correct/Incorrect': 'Correct'}, ignore_index=True)
-            a += 1
+            #self.df(a,'Correct/Incorrect', 'Correct')
+            self.df = self.df.append({'Intended Button': self.pressedButton, 'Pressed Button': button, 'Correct/Incorrect': 'Correct'}, ignore_index=True)
         else:
             #df(a,'Correct/Incorrect', 'Incorrect')
-            df = df.append({'Intended Button': self.pressedButton, 'Pressed Button': button, 'Correct/Incorrect': 'Incorrect'}, ignore_index=True)
-            a += 1
+            self.df = self.df.append({'Intended Button': self.pressedButton, 'Pressed Button': button, 'Correct/Incorrect': 'Incorrect'}, ignore_index=True)
 
-        if self.done == True:
+    def ExportData(self):
             #df(1, 'Total Buttons Pressed', a)
-            df.to_excel("Data.xlsx")
+            
+            self.df.to_csv("Data.csv",index=False)
 
     def game_tick(self):
         events = pygame.event.get()
@@ -176,7 +177,7 @@ class Observer():
                     if button == 1:
                         #send the button press to actor.py
                         self.connection.sendButton("O" + str(i))
-                        self.pressed_button = i
+                        self.pressedButton = i
 
             elif event.type == pygame.JOYHATMOTION:
                 # handle dpad presses
@@ -195,7 +196,7 @@ class Observer():
 
                         #send the hat press to actor.py
                         self.connection.sendButton("O" + str(hatValue))
-                        self.pressed_button = hatValue
+                        self.pressedButton = hatValue
 
             # elif event.type == pygame.JOYBUTTONUP:
             #button go up :(
@@ -243,6 +244,7 @@ class ObserverTransmit(Protocol):
 def main():
     observer = Observer()
     observer.Run()
+    observer.ExportData()
 
 main()
 

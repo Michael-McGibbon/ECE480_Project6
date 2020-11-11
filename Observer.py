@@ -144,47 +144,31 @@ class Observer():
 
     #updates the pandas dataframe when buttons from observer and actor are recorded
     def CollectData(self, button):
-        self.ButtonValueConversion(button)
+        buttonStr = self.ButtonValueConversion(button)
+        pressedButtonStr = self.ButtonValueConversion(self.pressedButton)
         if self.pressedButton == button:
-            self.df = self.df.append({'Intended Button': self.pressedButton, 'Pressed Button': button, 'Correct/Incorrect': 'Correct'}, ignore_index=True)
+            self.df = self.df.append({'Intended Button': pressedButtonStr, 'Pressed Button': buttonStr, 'Correct/Incorrect': 'Correct'}, ignore_index=True)
         else:
-            self.df = self.df.append({'Intended Button': self.pressedButton, 'Pressed Button': button, 'Correct/Incorrect': 'Incorrect'}, ignore_index=True)
+            self.df = self.df.append({'Intended Button': pressedButtonStr, 'Pressed Button': buttonStr, 'Correct/Incorrect': 'Incorrect'}, ignore_index=True)
     
     #Converts the numerical button value to the button name for data collection purposes
     def ButtonValueConversion(self, button):
-        if self.pressedButton == 0:
-            self.pressedButton = 'A'
-        elif self.pressedButton == 1:
-            self.pressedButton = 'B'
-        elif self.pressedButton == 2:
-            self.pressedButton = 'X'
-        elif self.pressedButton == 3:
-            self.pressedButton = 'Y'
-        elif self.pressedButton == 10:
-            self.pressedButton = 'Down Numpad'
-        elif self.pressedButton == 11:
-            self.pressedButton = 'Right Numpad'
-        elif self.pressedButton == 12:
-            self.pressedButton = 'Left Numpad'
-        elif self.pressedButton == 13:
-            self.pressedButton = 'Up Numpad'
-
         if button == 0:
-            button = 'A'
+            return 'A'
         elif button == 1:
-            button = 'B'
+            return 'B'
         elif button == 2:
-            button = 'X'
+            return 'X'
         elif button == 3:
-            button = 'Y'
+            return 'Y'
         elif button == 10:
-            button = 'Down Numpad'
+            return 'Down Numpad'
         elif button == 11:
-            button = 'Right Numpad'
+            return 'Right Numpad'
         elif button == 12:
-            button = 'Left Numpad'
+            return 'Left Numpad'
         elif button == 13:
-            button = 'Up Numpad'
+            return 'Up Numpad'
 
     #Updates the pandas dataframe with total buttons pressed and exports it to an excel file
     def ExportData(self):

@@ -34,8 +34,6 @@ CORRECTSCOREX = (SCREENX - 137)
 CORRECTSCOREY = 10
 INCORRECTSCOREX = CORRECTSCOREX
 INCORRECTSCOREY = (CORRECTSCOREY + 20)
-CORRECT = 0
-INCORRECT = 0
 DANCINGSPRITEX = (SCREENX/2)-64 
 DANCINGSPRITEY = (SCREENY-200)
 
@@ -58,9 +56,13 @@ dance4 = pygame.image.load('ImageFiles/DancingGuy/Dance4.png')
 dance5 = pygame.image.load('ImageFiles/DancingGuy/Dance5.png')
 dance6 = pygame.image.load('ImageFiles/DancingGuy/Dance6.png')
 
+
+# Initalize needed variables
+correct = 0
+incorrect = 0
 dance = (dance1, dance2, dance3, dance4, dance5, dance6)
 imagelist = [I0, I1, I2, I3, I4, I5, I6, I7]
-active = random.choice(imagelist)
+activeButton = random.choice(imagelist)
 
 #initialize pygame
 pygame.init() # initialize the game and necessary parts
@@ -90,7 +92,7 @@ def sponsor():
 
 # Active Button
 def buttonimage(x,y):
-    screen.blit(active, (x, y))
+    screen.blit(activeButton, (x, y))
 
 # Dancing Sprite
 def dancer(x,y):
@@ -99,24 +101,24 @@ def dancer(x,y):
 
 # Button Verification 
 def VerifyButton(button):
-    global CORRECT
-    global INCORRECT 
-    global active
+    global correct
+    global incorrect 
+    global activeButton
     if pressed_button == button:
-        CORRECT += 1
-        active = random.choice(imagelist)
+        correct += 1
+        activeButton = random.choice(imagelist)
     else:
-        INCORRECT += 1
+        incorrect += 1
 
 # Scoring Data
 font = pygame.font.Font('freesansbold.ttf', 20)
 
 def scorecorrect(x,y):
-    corrscore = font.render("Correct: " + str(CORRECT), True, (255,255,255))
+    corrscore = font.render("Correct: " + str(correct), True, (255,255,255))
     screen.blit(corrscore, (x, y))
 
 def scoreincorrect(x,y):
-    incorrscore = font.render("Incorrect: " + str(INCORRECT), True, (255,255,255))
+    incorrscore = font.render("Incorrect: " + str(incorrect), True, (255,255,255))
     screen.blit(incorrscore, (x, y))
 
 def game_tick():

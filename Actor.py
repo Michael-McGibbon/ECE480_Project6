@@ -13,18 +13,20 @@ import pygame
 import time
 import random
 import XInput
-import constants
+#import constants
 # twisted imports
 from twisted.internet import reactor
 from twisted.internet.protocol import Protocol
 from twisted.internet.endpoints import TCP4ClientEndpoint, connectProtocol
 from twisted.internet.task import LoopingCall
 
+
 # Constants
 DESIRED_FPS = 30.0 # 30 frames per second
 ACCEPTED_HATS = [(0,1),(0,-1),(1,0),(-1,0)]
 
-DELAY = 0.25
+DELAY = 0.08333333333
+#was 0.25, at 0.0833333 the entire signal is roughly .5 of a second
 
 HIGH_INTENSITY = 1.0
 LOW_INTENSITY = 0.125
@@ -38,8 +40,6 @@ CORRECTSCOREX = (SCREENX - 137)
 CORRECTSCOREY = 10
 INCORRECTSCOREX = CORRECTSCOREX
 INCORRECTSCOREY = (CORRECTSCOREY + 20)
-CORRECT = 0
-INCORRECT = 0
 DANCINGSPRITEX = (SCREENX/2)-64 
 DANCINGSPRITEY = (SCREENY-200)
 
@@ -89,7 +89,14 @@ dance4 = pygame.image.load('ImageFiles/DancingGuy/Dance4.png')
 dance5 = pygame.image.load('ImageFiles/DancingGuy/Dance5.png')
 dance6 = pygame.image.load('ImageFiles/DancingGuy/Dance6.png')
 
+
+
+#initialize variables for actor
 dance = (dance1, dance2, dance3, dance4, dance5, dance6)
+correct = 0
+incorrect = 0
+global recievedButton 
+
 
 #initialize pygame
 pygame.init() # initialize the game and necessary parts
@@ -106,11 +113,11 @@ joystick.init()
 font = pygame.font.Font('freesansbold.ttf', 20)
 
 def scorecorrect(x,y):
-    corrscore = font.render("Correct: " + str(CORRECT), True, (255,255,255))
+    corrscore = font.render("Correct: " + str(correct), True, (255,255,255))
     screen.blit(corrscore, (x, y))
 
 def scoreincorrect(x,y):
-    incorrscore = font.render("Incorrect: " + str(INCORRECT), True, (255,255,255))
+    incorrscore = font.render("Incorrect: " + str(incorrect), True, (255,255,255))
     screen.blit(incorrscore, (x, y))
 
 # MSU HATLab Logo
@@ -123,69 +130,81 @@ def dancer(x,y):
     time.sleep(.1)
 
 
-def GenerateVibration(intensity, duration, delay):
+def GenerateVibration(intensity, duration):
     XInput.set_vibration(0, intensity, intensity)
     time.sleep(duration)
     XInput.set_vibration(0, NO_INTENSITY, NO_INTENSITY)
-    time.sleep(delay)
+    time.sleep(DELAY)
+
+def VerifyButton(button):
+    global correct
+    global incorrect 
+    global recievedButton
+    if recievedButton == button:
+        correct += 1
+    else:
+        incorrect += 1
 
 def DecodeInput(inputSignal):
+    recievedButton = inputSignal
     if inputSignal == "0":
         # low - low - low = Abutton
-        GenerateVibration(LOW_INTENSITY, DELAY, DELAY)
-        GenerateVibration(LOW_INTENSITY, DELAY, DELAY)
-        GenerateVibration(LOW_INTENSITY, DELAY, DELAY)
+        GenerateVibration(LOW_INTENSITY, DELAY)
+        GenerateVibration(LOW_INTENSITY, DELAY)
+        GenerateVibration(LOW_INTENSITY, DELAY)
     elif inputSignal == "1":
         # low - low - high = BbUtton
-        GenerateVibration(LOW_INTENSITY, DELAY, DELAY)
-        GenerateVibration(LOW_INTENSITY, DELAY, DELAY)
-        GenerateVibration(HIGH_INTENSITY, DELAY, DELAY)
+        GenerateVibration(LOW_INTENSITY, DELAY)
+        GenerateVibration(LOW_INTENSITY, DELAY)
+        GenerateVibration(HIGH_INTENSITY, DELAY)
     elif inputSignal == "2":
         # low - high - low = Xbutton
-        GenerateVibration(LOW_INTENSITY, DELAY, DELAY)
-        GenerateVibration(HIGH_INTENSITY, DELAY, DELAY)
-        GenerateVibration(LOW_INTENSITY, DELAY, DELAY)
+        GenerateVibration(LOW_INTENSITY, DELAY)
+        GenerateVibration(HIGH_INTENSITY, DELAY)
+        GenerateVibration(LOW_INTENSITY, DELAY)
     elif inputSignal == "3":
         # low - high - high = Ybutton
-        GenerateVibration(LOW_INTENSITY, DELAY, DELAY)
-        GenerateVibration(HIGH_INTENSITY, DELAY, DELAY)
-        GenerateVibration(HIGH_INTENSITY, DELAY, DELAY)
+        GenerateVibration(LOW_INTENSITY, DELAY)
+        GenerateVibration(HIGH_INTENSITY, DELAY)
+        GenerateVibration(HIGH_INTENSITY, DELAY)
     elif inputSignal == "4":
-        print("RECIEVED: 4")
+        pass
     elif inputSignal == "5":
-        print("RECIEVED: 5")
+        pass
     elif inputSignal == "6":
-        print("RECIEVED: 6")
+        pass
     elif inputSignal == "7":
-        print("RECIEVED: 7")
+        pass
     elif inputSignal == "8":
-        print("RECIEVED: 8")
+        pass
     elif inputSignal == "9":
-        print("RECIEVED: 9")
+        pass
     elif inputSignal == "10":
         # high - high - high = DOWNbutton
-        GenerateVibration(HIGH_INTENSITY, DELAY, DELAY)
-        GenerateVibration(HIGH_INTENSITY, DELAY, DELAY)
-        GenerateVibration(HIGH_INTENSITY, DELAY, DELAY)
+        GenerateVibration(HIGH_INTENSITY, DELAY)
+        GenerateVibration(HIGH_INTENSITY, DELAY)
+        GenerateVibration(HIGH_INTENSITY, DELAY)
     elif inputSignal == "11":
         # high - high - low = RIGHTbutton
-        GenerateVibration(HIGH_INTENSITY, DELAY, DELAY)
-        GenerateVibration(HIGH_INTENSITY, DELAY, DELAY)
-        GenerateVibration(LOW_INTENSITY, DELAY, DELAY)
+        GenerateVibration(HIGH_INTENSITY, DELAY)
+        GenerateVibration(HIGH_INTENSITY, DELAY)
+        GenerateVibration(LOW_INTENSITY, DELAY)
     elif inputSignal == "12":
         # high - low - high = LEFTbutton
-        GenerateVibration(HIGH_INTENSITY, DELAY, DELAY)
-        GenerateVibration(LOW_INTENSITY, DELAY, DELAY)
-        GenerateVibration(HIGH_INTENSITY, DELAY, DELAY)
+        GenerateVibration(HIGH_INTENSITY, DELAY)
+        GenerateVibration(LOW_INTENSITY, DELAY)
+        GenerateVibration(HIGH_INTENSITY, DELAY)
     elif inputSignal == "13":
         # high - low - low = UPbutton
-        GenerateVibration(HIGH_INTENSITY, DELAY, DELAY)
-        GenerateVibration(LOW_INTENSITY, DELAY, DELAY)
-        GenerateVibration(LOW_INTENSITY, DELAY, DELAY)
+        GenerateVibration(HIGH_INTENSITY, DELAY)
+        GenerateVibration(LOW_INTENSITY, DELAY)
+        GenerateVibration(LOW_INTENSITY, DELAY)
 
 
 def game_tick():
     done = False # Loop until the user clicks the close button.
+
+    global recievedButton
 
     screen.fill((112, 128, 144))
     screen.blit(background,(0, 0))
@@ -204,6 +223,8 @@ def game_tick():
 
                     #send the button press to the cloud service
                     connection.sendButton("A" + str(i))
+                    VerifyButton(str(i))
+
 
         elif event.type == pygame.JOYHATMOTION:
             # handle dpad presses
@@ -222,6 +243,7 @@ def game_tick():
 
                     # create a new connection and send it to the Cloud Service
                     connection.sendButton("A" + str(hatValue))
+                    VerifyButton(str(hatValue))
 
         # elif event.type == pygame.JOYBUTTONUP:
         #button go up :(

@@ -77,7 +77,7 @@ class Observer():
         #set current button
         self.activeButton = random.choice(self.imagelist)
 
-        #set up pandas for data collection
+        #set up pandas dataframe for data collection
         self.df = pd.DataFrame(columns=['Intended Button', 'Pressed Button','Correct/Incorrect', 'Time','Total Buttons Pressed'])
 
         # set up twisted end point and connection channel
@@ -144,22 +144,54 @@ class Observer():
             self.incorrect += 1
         self.CollectData(button)
 
+    #updates the pandas dataframe when buttons from observer and actor are recorded
     def CollectData(self, button):
-
-        #df = df.append({'Intended Button'})
-        #df(a, 'Intended Button', self.pressedButton)
-        #df(a, 'Pressed Button', button)
+        self.ButtonValueConversion(button)
         if self.pressedButton == button:
-            #self.df(a,'Correct/Incorrect', 'Correct')
             self.df = self.df.append({'Intended Button': self.pressedButton, 'Pressed Button': button, 'Correct/Incorrect': 'Correct'}, ignore_index=True)
         else:
-            #df(a,'Correct/Incorrect', 'Incorrect')
             self.df = self.df.append({'Intended Button': self.pressedButton, 'Pressed Button': button, 'Correct/Incorrect': 'Incorrect'}, ignore_index=True)
+    
+    #Converts the numerical button value to the button name for data collection purposes
+    def ButtonValueConversion(self, button):
+        if self.pressedButton == 0:
+            self.pressedButton = 'A'
+        elif self.pressedButton == 1:
+            self.pressedButton = 'B'
+        elif self.pressedButton == 2:
+            self.pressedButton = 'X'
+        elif self.pressedButton == 3:
+            self.pressedButton = 'Y'
+        elif self.pressedButton == 10:
+            self.pressedButton = 'Down Numpad'
+        elif self.pressedButton == 11:
+            self.pressedButton = 'Right Numpad'
+        elif self.pressedButton == 12:
+            self.pressedButton = 'Left Numpad'
+        elif self.pressedButton == 13:
+            self.pressedButton = 'Up Numpad'
 
+        if button == 0:
+            button = 'A'
+        elif button == 1:
+            button = 'B'
+        elif button == 2:
+            button = 'X'
+        elif button == 3:
+            button = 'Y'
+        elif button == 10:
+            button = 'Down Numpad'
+        elif button == 11:
+            button = 'Right Numpad'
+        elif button == 12:
+            button = 'Left Numpad'
+        elif button == 13:
+            button = 'Up Numpad'
+
+    #Updates the pandas dataframe with total buttons pressed and exports it to an excel file
     def ExportData(self):
-            #df(1, 'Total Buttons Pressed', a)
-            
-            self.df.to_csv("Data.csv",index=False)
+        df[1, 'Total Buttons Pressed'] = self.correct + self.incorrect
+        self.df.to_csv("Data.csv",index=False)
 
     def game_tick(self):
         events = pygame.event.get()

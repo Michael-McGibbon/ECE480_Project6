@@ -15,6 +15,7 @@ import pygame
 import time
 import random
 import XInput
+from pandas import pd
 
 # twisted imports
 from twisted.internet import reactor
@@ -133,17 +134,18 @@ class Observer():
         self.screen.blit(incorrscore, (INCORRECTSCOREX, INCORRECTSCOREY))
 
     def VerifyButton(self, button):
-        if self.pressed_button == button:
+        if self.pressedButton == button:
             self.correct += 1
             self.activeButton = random.choice(self.imagelist)
         else:
             self.incorrect += 1
+        self.DataCollection(button)
 
     def DataCollection(self, button):
         df = pd.Dataframe(index-index, column=['Intended Button', 'Pressed Button','Correct/Incorrect', 'Time','Total Buttons Pressed'])
         a = 0
-        df(a, 'Intended Button', button)
-        df(a, 'Pressed Button', self.pressedButton)
+        df(a, 'Intended Button', self.pressedButton)
+        df(a, 'Pressed Button', button)
         if self.pressedButton == button:
             df(a,'Correct/Incorrect', 'Correct')
         

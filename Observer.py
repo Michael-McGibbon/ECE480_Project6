@@ -47,7 +47,7 @@ DANCINGSPRITEY = (SCREENY-200)
 
 
 class Observer():
-    def __init__(self):
+    def __init__(self, ip):
         #intialize variables
         self.correct = 0
         self.incorrect = 0
@@ -81,9 +81,7 @@ class Observer():
         self.df = pd.DataFrame(columns=['Intended Button', 'Pressed Button','Correct/Incorrect', 'Time','Total Buttons Pressed'])
 
         # set up twisted end point and connection channel
-            #JEREMY: CHANGE "99.28.129.156" INTO "localhost"
-            #EVERYONE ELSE: DO THE OPPOSITE OF ABOVE
-        self.point = TCP4ClientEndpoint(reactor, "99.28.129.156", 25565)
+        self.point = TCP4ClientEndpoint(reactor, ip, 25565)
         self.connection = ObserverTransmit(self)
 
     def import_images(self):
@@ -242,7 +240,10 @@ class ObserverTransmit(Protocol):
         self.transport.write(button.encode("utf-8"))
 
 def main():
-    observer = Observer()
+    #JEREMY: CHANGE "99.28.129.156" INTO "localhost"
+    #EVERYONE ELSE: DO THE OPPOSITE OF ABOVE
+    ip = "99.28.129.156"
+    observer = Observer(ip)
     observer.Run()
     observer.ExportData()
 

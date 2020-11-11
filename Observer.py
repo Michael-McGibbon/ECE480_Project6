@@ -121,8 +121,8 @@ class Observer():
         self.screen.blit(self.activeButton, (ACTIVEBUTTONX, ACTIVEBUTTONY))
 
         #display the dancing sprite
-        self.screen.blit(random.choice(self.dance), (DANCINGSPRITEX,DANCINGSPRITEY))
-        time.sleep(.1)
+        #self.screen.blit(random.choice(self.dance), (DANCINGSPRITEX,DANCINGSPRITEY))
+        #time.sleep(.05)
         
         #display the correct score 
         corrscore = font.render("Correct: " + str(self.correct), True, (255,255,255))
@@ -172,7 +172,7 @@ class Observer():
                     if button == 1:
                         #send the button press to actor.py
                         self.connection.sendButton("O" + str(i))
-                        self.pressedButton = i
+                        self.pressed_button = i
 
             elif event.type == pygame.JOYHATMOTION:
                 # handle dpad presses
@@ -191,7 +191,7 @@ class Observer():
 
                         #send the hat press to actor.py
                         self.connection.sendButton("O" + str(hatValue))
-                        self.pressedButton = hatValue
+                        self.pressed_button = hatValue
 
             # elif event.type == pygame.JOYBUTTONUP:
             #button go up :(

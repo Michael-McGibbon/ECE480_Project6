@@ -106,8 +106,8 @@ class Actor():
 
         self.screen.blit(self.msuhat, (0, 0))
         
-        self.screen.blit(random.choice(self.dance), (DANCINGSPRITEX,DANCINGSPRITEY))
-        time.sleep(.1)
+        #self.screen.blit(random.choice(self.dance), (DANCINGSPRITEX,DANCINGSPRITEY))
+        #time.sleep(.05)
 
     def game_tick(self):
         done = False # Loop until the user clicks the close button.

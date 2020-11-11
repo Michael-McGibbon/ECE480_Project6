@@ -51,6 +51,7 @@ class Observer():
         self.correct = 0
         self.incorrect = 0
         self.pressedButton = -1
+        self.done = False
 
         #set up random seed based on current time
         a = datetime.now()
@@ -138,33 +139,30 @@ class Observer():
         else:
             self.incorrect += 1
 
-def DataCollection(button):
-    df = pd.Dataframe(index-index, column=['Intended Button', 'Pressed Button','Correct/Incorrect', 'Time','Total Buttons Pressed'])
-    a = 0
-    df(a, 'Intended Button', button)
-    df(a, 'Pressed Button', pressed_button)
-    if pressed_button == button:
-        df(a,'Correct/Incorrect', 'Correct')
+    def DataCollection(self, button):
+        df = pd.Dataframe(index-index, column=['Intended Button', 'Pressed Button','Correct/Incorrect', 'Time','Total Buttons Pressed'])
+        a = 0
+        df(a, 'Intended Button', button)
+        df(a, 'Pressed Button', self.pressedButton)
+        if self.pressedButton == button:
+            df(a,'Correct/Incorrect', 'Correct')
         
-        a += 1
-    else:
-        df(a,'Correct/Incorrect', 'Incorrect')
-        a += 1
+            a += 1
+        else:
+            df(a,'Correct/Incorrect', 'Incorrect')
+            a += 1
 
-    if done == True:
-        df(1, 'Total Buttons Pressed', a)
-        df.to_excel("Data.xlsx")
+        if self.done == True:
+            df(1, 'Total Buttons Pressed', a)
+            df.to_excel("Data.xlsx")
 
-def game_tick():
-    global done
-    done = False # Loop until the user clicks the close button.
-    global pressed_button
-    events = pygame.event.get()
-    for event in events:
+    def game_tick(self):
+        events = pygame.event.get()
+        for event in events:
 
             # Process input events
             if event.type == pygame.QUIT: # If user clicked close.
-                done = True # Flag that we are done so we exit this loop
+                self.done = True # Flag that we are done so we exit this loop
 
             elif event.type == pygame.JOYBUTTONDOWN:
                 # handle button presses, not dpad yet
@@ -174,7 +172,7 @@ def game_tick():
                     if button == 1:
                         #send the button press to actor.py
                         self.connection.sendButton("O" + str(i))
-                        self.pressed_button = i
+                        self.pressedButton = i
 
             elif event.type == pygame.JOYHATMOTION:
                 # handle dpad presses
@@ -193,21 +191,21 @@ def game_tick():
 
                         #send the hat press to actor.py
                         self.connection.sendButton("O" + str(hatValue))
-                        self.pressed_button = hatValue
+                        self.pressedButton = hatValue
 
             # elif event.type == pygame.JOYBUTTONUP:
             #button go up :(
     
         
-        #redraw()
+            #redraw()
 
-        self.display()
-        pygame.display.update()
+            self.display()
+            pygame.display.update()
 
-        if done == True:
-            #quit the game
-            pygame.quit()
-            reactor.stop()
+            if self.done == True:
+                #quit the game
+                pygame.quit()
+                reactor.stop()
 
     def Run(self):
         # Set up a looping call every 1/30th of a second to run your game tick

@@ -135,6 +135,7 @@ class Observer():
         self.screen.blit(incorrscore, (INCORRECTSCOREX, INCORRECTSCOREY))
 
     def VerifyButton(self, button):
+        t2 = lambda: int(round(time.time() * 1000))
         if self.pressedButton == button:
             self.correct += 1
             self.activeButton = random.choice(self.imagelist)
@@ -143,13 +144,14 @@ class Observer():
         self.CollectData(button)
 
     #updates the pandas dataframe when buttons from observer and actor are recorded
-    def CollectData(self, button):
+    def CollectData(self, button, t1, t2):
         buttonStr = self.ButtonValueConversion(button)
         pressedButtonStr = self.ButtonValueConversion(self.pressedButton)
+        timeStamp = t2 - t1
         if self.pressedButton == button:
-            self.df = self.df.append({'Intended Button': pressedButtonStr, 'Pressed Button': buttonStr, 'Correct/Incorrect': 'Correct'}, ignore_index=True)
+            self.df = self.df.append({'Intended Button': pressedButtonStr, 'Pressed Button': buttonStr, 'Correct/Incorrect': 'Correct', 'Time': timeStamp}, ignore_index=True)
         else:
-            self.df = self.df.append({'Intended Button': pressedButtonStr, 'Pressed Button': buttonStr, 'Correct/Incorrect': 'Incorrect'}, ignore_index=True)
+            self.df = self.df.append({'Intended Button': pressedButtonStr, 'Pressed Button': buttonStr, 'Correct/Incorrect': 'Incorrect', 'Time': timeStamp}, ignore_index=True)
     
     #Converts the numerical button value to the button name for data collection purposes
     def ButtonValueConversion(self, button):
@@ -212,6 +214,7 @@ class Observer():
                         self.connection.sendButton("O" + str(hatValue))
                         self.pressedButton = hatValue
 
+            t1 = lambda: int(round(time.time() * 1000))
             # elif event.type == pygame.JOYBUTTONUP:
             #button go up :(
     

@@ -43,6 +43,9 @@ INCORRECTSCOREY = (CORRECTSCOREY + 20)
 DANCINGSPRITEX = (SCREENX/2)-64 
 DANCINGSPRITEY = (SCREENY-200)
 
+CORRECTBUBBLESX = 0
+CORRECTBUBBLESY = (SCREENY/2)-64
+
 
 class Actor():
     def __init__(self, ip):
@@ -91,6 +94,13 @@ class Actor():
         dance5 = pygame.image.load('ImageFiles/DancingGuy/Dance5.png')
         dance6 = pygame.image.load('ImageFiles/DancingGuy/Dance6.png')
 
+        self.Correct0 = pygame.image.load('ImageFiles/0Correct.png')
+        Correct1 = pygame.image.load('ImageFiles/1Correct.png')
+        Correct2 = pygame.image.load('ImageFiles/2Correct.png')
+        Correct3 = pygame.image.load('ImageFiles/3Correct.png')
+        Correct4 = pygame.image.load('ImageFiles/4Correct.png')
+        Correct5 = pygame.image.load('ImageFiles/5Correct.png')
+
         self.dance = (dance1, dance2, dance3, dance4, dance5, dance6)
 
     def display(self):
@@ -100,6 +110,8 @@ class Actor():
         self.screen.blit(self.background,(0, 0))
         corrscore = self.font.render("Correct: " + str(self.correct), True, (255,255,255))
         self.screen.blit(corrscore, (CORRECTSCOREX, CORRECTSCOREY))
+
+        self.screen.blit(self.Correct0, (CORRECTBUBBLESX, CORRECTBUBBLESY))
 
         incorrscore = self.font.render("Incorrect: " + str(self.incorrect), True, (255,255,255))
         self.screen.blit(incorrscore, (INCORRECTSCOREX, INCORRECTSCOREY))

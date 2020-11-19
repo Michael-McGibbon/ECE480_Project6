@@ -85,14 +85,14 @@ class Observer():
         self.connection = ObserverTransmit(self)
 
     def import_images(self):
-        I2 = pygame.image.load('ImageFiles/Xbutton.png')
-        I3 = pygame.image.load('ImageFiles/Ybutton.png')
-        I0 = pygame.image.load('ImageFiles/Abutton.png')
-        I1 = pygame.image.load('ImageFiles/Bbutton.png')
-        I7 = pygame.image.load('ImageFiles/UPbutton.png')
-        I4 = pygame.image.load('ImageFiles/DOWNbutton.png')
-        I6 = pygame.image.load('ImageFiles/LEFTbutton.png')
-        I5 = pygame.image.load('ImageFiles/RIGHTbutton.png')
+        I2 = pygame.image.load('ImageFiles/Buttons/Xbutton.png')
+        I3 = pygame.image.load('ImageFiles/Buttons/Ybutton.png')
+        I0 = pygame.image.load('ImageFiles/Buttons/Abutton.png')
+        I1 = pygame.image.load('ImageFiles/Buttons/Bbutton.png')
+        I7 = pygame.image.load('ImageFiles/Buttons/UPbutton.png')
+        I4 = pygame.image.load('ImageFiles/Buttons/DOWNbutton.png')
+        I6 = pygame.image.load('ImageFiles/Buttons/LEFTbutton.png')
+        I5 = pygame.image.load('ImageFiles/Buttons/RIGHTbutton.png')
 
         dance1 = pygame.image.load('ImageFiles/DancingGuy/Dance1.png')
         dance2 = pygame.image.load('ImageFiles/DancingGuy/Dance2.png')

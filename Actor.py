@@ -47,11 +47,14 @@ CORRECTBUBBLESX = 0
 CORRECTBUBBLESY = (SCREENY/2)-64
 
 
+
 class Actor():
     def __init__(self, ip):
         self.recievedButton = -1
         self.correct = 0
         self.incorrect = 0
+
+        self.BUBBLESINDEX = 0
 
         #intialize pygame
         pygame.init() # initialize the game and necessary parts
@@ -94,14 +97,16 @@ class Actor():
         dance5 = pygame.image.load('ImageFiles/DancingGuy/Dance5.png')
         dance6 = pygame.image.load('ImageFiles/DancingGuy/Dance6.png')
 
-        self.Correct0 = pygame.image.load('ImageFiles/0Correct.png')
-        Correct1 = pygame.image.load('ImageFiles/1Correct.png')
-        Correct2 = pygame.image.load('ImageFiles/2Correct.png')
-        Correct3 = pygame.image.load('ImageFiles/3Correct.png')
-        Correct4 = pygame.image.load('ImageFiles/4Correct.png')
-        Correct5 = pygame.image.load('ImageFiles/5Correct.png')
+        Correct0 = pygame.image.load('ImageFiles/Bubbles/0Correct.png')
+        Correct1 = pygame.image.load('ImageFiles/Bubbles/1Correct.png')
+        Correct2 = pygame.image.load('ImageFiles/Bubbles/2Correct.png')
+        Correct3 = pygame.image.load('ImageFiles/Bubbles/3Correct.png')
+        Correct4 = pygame.image.load('ImageFiles/Bubbles/4Correct.png')
+        Correct5 = pygame.image.load('ImageFiles/Bubbles/5Correct.png')
 
         self.dance = (dance1, dance2, dance3, dance4, dance5, dance6)
+
+        self.bubbles = (Correct0, Correct1, Correct2, Correct3, Correct4, Correct5)
 
     def display(self):
         #initalize the font
@@ -111,7 +116,7 @@ class Actor():
         corrscore = self.font.render("Correct: " + str(self.correct), True, (255,255,255))
         self.screen.blit(corrscore, (CORRECTSCOREX, CORRECTSCOREY))
 
-        self.screen.blit(self.Correct0, (CORRECTBUBBLESX, CORRECTBUBBLESY))
+        self.screen.blit(self.bubbles[self.BUBBLESINDEX], (CORRECTBUBBLESX, CORRECTBUBBLESY))
 
         incorrscore = self.font.render("Incorrect: " + str(self.incorrect), True, (255,255,255))
         self.screen.blit(incorrscore, (INCORRECTSCOREX, INCORRECTSCOREY))
@@ -120,7 +125,7 @@ class Actor():
         
         #self.screen.blit(random.choice(self.dance), (DANCINGSPRITEX,DANCINGSPRITEY))
         #time.sleep(.05)
-
+       
     def game_tick(self):
         done = False # Loop until the user clicks the close button.
 
@@ -183,8 +188,10 @@ class Actor():
     def VerifyButton(self, button):
         if self.recievedButton == button:
             self.correct += 1
+            self.BUBBLESINDEX += 1
         else:
             self.incorrect += 1
+            self.BUBBLESINDEX = 0
 
     def DecodeInput(self, inputSignal):
         self.recievedButton = inputSignal

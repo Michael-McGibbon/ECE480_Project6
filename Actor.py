@@ -184,11 +184,14 @@ class Actor():
         time.sleep(duration)
         XInput.set_vibration(0, NO_INTENSITY, NO_INTENSITY)
         time.sleep(DELAY)
-
+     
     def VerifyButton(self, button):
         if self.recievedButton == button:
             self.correct += 1
-            self.BUBBLESINDEX += 1
+            if self.BUBBLESINDEX <  5:
+                self.BUBBLESINDEX += 1
+            else:
+                self.BUBBLESINDEX = 1
         else:
             self.incorrect += 1
             self.BUBBLESINDEX = 0

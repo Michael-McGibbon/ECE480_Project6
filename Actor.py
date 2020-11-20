@@ -25,8 +25,10 @@ from twisted.internet.task import LoopingCall
 DESIRED_FPS = 30.0 # 30 frames per second
 ACCEPTED_HATS = [(0,1),(0,-1),(1,0),(-1,0)]
 
-DELAY = 0.08333333333
-#was 0.25, at 0.0833333 the entire signal is roughly .5 of a second
+# half of a second
+DELAY = 0.56
+# one sixth of a second
+SHORT_DELAY = 0.1666666
 
 HIGH_INTENSITY = 1.0
 LOW_INTENSITY = 0.125
@@ -179,11 +181,10 @@ class Actor():
             pygame.quit()
             reactor.stop()
 
-    def GenerateVibration(self, intensity, duration):
-        XInput.set_vibration(0, intensity, intensity)
+    def GenerateVibration(self, left_intensity, right_intensity, duration):
+        XInput.set_vibration(0, left_intensity, right_intensity)
         time.sleep(duration)
-        XInput.set_vibration(0, NO_INTENSITY, NO_INTENSITY)
-        time.sleep(DELAY)
+        XInput.set_vibration(0,NO_INTENSITY,NO_INTENSITY)
      
     def VerifyButton(self, button):
         if self.recievedButton == button:
@@ -199,25 +200,21 @@ class Actor():
     def DecodeInput(self, inputSignal):
         self.recievedButton = inputSignal
         if inputSignal == "0":
-            # low - low - low = Abutton
-            self.GenerateVibration(LOW_INTENSITY, DELAY)
-            self.GenerateVibration(LOW_INTENSITY, DELAY)
-            self.GenerateVibration(LOW_INTENSITY, DELAY)
+            # low = A Button
+            self.GenerateVibration(NO_INTENSITY,LOW_INTENSITY,DELAY)
         elif inputSignal == "1":
-            # low - low - high = BbUtton
-            self.GenerateVibration(LOW_INTENSITY, DELAY)
-            self.GenerateVibration(LOW_INTENSITY, DELAY)
-            self.GenerateVibration(HIGH_INTENSITY, DELAY)
+            # low - high  = B button
+            self.GenerateVibration(NO_INTENSITY,LOW_INTENSITY,SHORT_DELAY)
+            self.GenerateVibration(NO_INTENSITY,NO_INTENSITY,SHORT_DELAY)
+            self.GenerateVibration(NO_INTENSITY,HIGH_INTENSITY,SHORT_DELAY)
         elif inputSignal == "2":
-            # low - high - low = Xbutton
-            self.GenerateVibration(LOW_INTENSITY, DELAY)
-            self.GenerateVibration(HIGH_INTENSITY, DELAY)
-            self.GenerateVibration(LOW_INTENSITY, DELAY)
+            # high - low = X button
+            self.GenerateVibration(NO_INTENSITY,HIGH_INTENSITY,SHORT_DELAY)
+            self.GenerateVibration(NO_INTENSITY,NO_INTENSITY,SHORT_DELAY)
+            self.GenerateVibration(NO_INTENSITY,LOW_INTENSITY,SHORT_DELAY)
         elif inputSignal == "3":
-            # low - high - high = Ybutton
-            self.GenerateVibration(LOW_INTENSITY, DELAY)
-            self.GenerateVibration(HIGH_INTENSITY, DELAY)
-            self.GenerateVibration(HIGH_INTENSITY, DELAY)
+            # high = Y button
+            self.GenerateVibration(NO_INTENSITY,HIGH_INTENSITY,DELAY)
         elif inputSignal == "4":
             pass
         elif inputSignal == "5":
@@ -231,25 +228,21 @@ class Actor():
         elif inputSignal == "9":
             pass
         elif inputSignal == "10":
-            # high - high - high = DOWNbutton
-            self.GenerateVibration(HIGH_INTENSITY, DELAY)
-            self.GenerateVibration(HIGH_INTENSITY, DELAY)
-            self.GenerateVibration(HIGH_INTENSITY, DELAY)
+            # low = DOWNbutton
+            self.GenerateVibration(LOW_INTENSITY,NO_INTENSITY,2*DELAY)
         elif inputSignal == "11":
             # high - high - low = RIGHTbutton
-            self.GenerateVibration(HIGH_INTENSITY, DELAY)
-            self.GenerateVibration(HIGH_INTENSITY, DELAY)
-            self.GenerateVibration(LOW_INTENSITY, DELAY)
+            self.GenerateVibration(LOW_INTENSITY,NO_INTENSITY,SHORT_DELAY)
+            self.GenerateVibration(NO_INTENSITY,NO_INTENSITY,SHORT_DELAY)
+            self.GenerateVibration(HIGH_INTENSITY,NO_INTENSITY,SHORT_DELAY)
         elif inputSignal == "12":
             # high - low - high = LEFTbutton
-            self.GenerateVibration(HIGH_INTENSITY, DELAY)
-            self.GenerateVibration(LOW_INTENSITY, DELAY)
-            self.GenerateVibration(HIGH_INTENSITY, DELAY)
+            self.GenerateVibration(HIGH_INTENSITY,NO_INTENSITY,SHORT_DELAY)
+            self.GenerateVibration(NO_INTENSITY,NO_INTENSITY,SHORT_DELAY)
+            self.GenerateVibration(LOW_INTENSITY,NO_INTENSITY,SHORT_DELAY)
         elif inputSignal == "13":
-            # high - low - low = UPbutton
-            self.GenerateVibration(HIGH_INTENSITY, DELAY)
-            self.GenerateVibration(LOW_INTENSITY, DELAY)
-            self.GenerateVibration(LOW_INTENSITY, DELAY)
+            # high = UPbutton
+            self.GenerateVibration(HIGH_INTENSITY,NO_INTENSITY,2*DELAY)
 
     def Run(self):
         #turn on the game tick at the desired FPS

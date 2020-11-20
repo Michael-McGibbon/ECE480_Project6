@@ -313,7 +313,7 @@ class ActorTransmit(Protocol):
 def main():
     #JEREMY: CHANGE "99.28.129.156" INTO "localhost"
     #EVERYONE ELSE: DO THE OPPOSITE OF ABOVE
-    ip = "99.28.129.156"
+    ip = "localhost"
     actor = Actor(ip)
     actor.Run()
 

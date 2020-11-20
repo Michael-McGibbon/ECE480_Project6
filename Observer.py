@@ -53,6 +53,8 @@ class Observer():
         self.incorrect = 0
         self.pressedButton = -1
         self.done = False
+        self.timePressed = 0
+        self.timeRecieved = 0
 
         #set up random seed based on current time
         a = datetime.now()
@@ -75,7 +77,8 @@ class Observer():
         self.import_images()
 
         #set current button
-        self.activeButton = random.choice(self.imagelist)
+        self.activeButtonImage = random.choice(self.imagelist)
+        self.activeButton = 0
 
         #set up pandas dataframe for data collection
         self.df = pd.DataFrame(columns=['Intended Button', 'Pressed Button','Correct/Incorrect', 'Time','Total Buttons Pressed'])
@@ -120,7 +123,7 @@ class Observer():
         self.screen.blit(self.msuhat, (0, 0))
 
         #display the active button
-        self.screen.blit(self.activeButton, (ACTIVEBUTTONX, ACTIVEBUTTONY))
+        self.screen.blit(self.activeButtonImage, (ACTIVEBUTTONX, ACTIVEBUTTONY))
 
         #display the dancing sprite
         #self.screen.blit(random.choice(self.dance), (DANCINGSPRITEX,DANCINGSPRITEY))
@@ -134,20 +137,24 @@ class Observer():
         incorrscore = font.render("Incorrect: " + str(self.incorrect), True, (255,255,255))
         self.screen.blit(incorrscore, (INCORRECTSCOREX, INCORRECTSCOREY))
 
+    def ChangeButton(self):
+        self.activeButtonImage = random.choice(self.imagelist)
+        #self.activeButton = 
+
     def VerifyButton(self, button):
-        t2 = lambda: int(round(time.time() * 1000))
+        self.timeRecieved = int(round(time.time() * 1000))
         if self.pressedButton == button:
             self.correct += 1
-            self.activeButton = random.choice(self.imagelist)
+            self.ChangeButton()
         else:
             self.incorrect += 1
         self.CollectData(button)
 
     #updates the pandas dataframe when buttons from observer and actor are recorded
-    def CollectData(self, button, t1, t2):
+    def CollectData(self, button):
         buttonStr = self.ButtonValueConversion(button)
         pressedButtonStr = self.ButtonValueConversion(self.pressedButton)
-        timeStamp = t2 - t1
+        timeStamp = self.timeRecieved - self.timePressed
         if self.pressedButton == button:
             self.df = self.df.append({'Intended Button': pressedButtonStr, 'Pressed Button': buttonStr, 'Correct/Incorrect': 'Correct', 'Time': timeStamp}, ignore_index=True)
         else:
@@ -214,7 +221,7 @@ class Observer():
                         self.connection.sendButton("O" + str(hatValue))
                         self.pressedButton = hatValue
 
-            t1 = lambda: int(round(time.time() * 1000))
+            self.timePressed = int(round(time.time() * 1000))
             # elif event.type == pygame.JOYBUTTONUP:
             #button go up :(
     
@@ -261,7 +268,7 @@ class ObserverTransmit(Protocol):
 def main():
     #JEREMY: CHANGE "99.28.129.156" INTO "localhost"
     #EVERYONE ELSE: DO THE OPPOSITE OF ABOVE
-    ip = "99.28.129.156"
+    ip = "localhost"
     observer = Observer(ip)
     observer.Run()
     observer.ExportData()

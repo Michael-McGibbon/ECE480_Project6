@@ -47,7 +47,7 @@ DANCINGSPRITEY = (SCREENY-200)
 
 
 class Observer():
-    def __init__(self, ip):
+    def __init__(self, ip, levelLength = 5):
         #intialize variables
         self.correct = 0
         self.incorrect = 0
@@ -55,6 +55,9 @@ class Observer():
         self.done = False
         self.timePressed = 0
         self.timeRecieved = 0
+        self.buttonList = []
+        self.level = 0
+        self.levelLength = levelLength
 
         #set up random seed based on current time
         a = datetime.now()
@@ -73,12 +76,13 @@ class Observer():
         self.joystick = pygame.joystick.Joystick(0)
         self.joystick.init()
 
+
+
         #import images
         self.import_images()
 
-        #set current button
-        self.activeButtonImage = random.choice(self.imagelist)
-        self.activeButton = 0
+        #level up to select a random button
+        self.LevelUp()
 
         #set up pandas dataframe for data collection
         self.df = pd.DataFrame(columns=['Intended Button', 'Pressed Button','Correct/Incorrect', 'Time','Total Buttons Pressed'])
@@ -86,6 +90,7 @@ class Observer():
         # set up twisted end point and connection channel
         self.point = TCP4ClientEndpoint(reactor, ip, 25565)
         self.connection = ObserverTransmit(self)
+
 
     def import_images(self):
         I2 = pygame.image.load('ImageFiles/Buttons/Xbutton.png')
@@ -108,7 +113,7 @@ class Observer():
         self.msuhat = pygame.image.load('ImageFiles/msuhat.png')
 
         self.dance = (dance1, dance2, dance3, dance4, dance5, dance6)
-        self.imagelist = [I0, I1, I2, I3, I4, I5, I6, I7]
+        self.imagelist = [(0,I0), (1,I1), (2,I2), (3,I3), (10,I4), (11,I5), (12,I6), (13,I7)]
 
     def display(self):
 
@@ -138,14 +143,28 @@ class Observer():
         self.screen.blit(incorrscore, (INCORRECTSCOREX, INCORRECTSCOREY))
 
     def ChangeButton(self):
-        self.activeButtonImage = random.choice(self.imagelist)
-        #self.activeButton = 
+        self.activeButtonImage = (random.choice(self.buttonList)[1])
+        self.activeButton = (random.choice(self.buttonList)[0])
+
+    def LevelUp(self):
+        self.level += 1
+        self.incorrect = 0
+        self.correct = 0
+
+        newButton = random.choice(self.imagelist)
+        self.buttonList.append(newButton)
+        self.imagelist.remove(newButton)
+
+        self.ChangeButton()
 
     def VerifyButton(self, button):
         self.timeRecieved = int(round(time.time() * 1000))
         if self.pressedButton == button:
             self.correct += 1
-            self.ChangeButton()
+            if self.correct == self.levelLength:
+                self.LevelUp()
+            else:
+                self.ChangeButton()
         else:
             self.incorrect += 1
         self.CollectData(button)
@@ -269,7 +288,8 @@ def main():
     #JEREMY: CHANGE "99.28.129.156" INTO "localhost"
     #EVERYONE ELSE: DO THE OPPOSITE OF ABOVE
     ip = "localhost"
-    observer = Observer(ip)
+    levelLength = 5
+    observer = Observer(ip,levelLength)
     observer.Run()
     observer.ExportData()
 

@@ -38,7 +38,7 @@ SCREENX = 400
 SCREENY = 600
 ACTIVEBUTTONX = (SCREENX/2)-64 
 ACTIVEBUTTONY = (SCREENY/2)-64 
-CORRECTSCOREX = (SCREENX - 137)
+CORRECTSCOREX = (SCREENX - 135)
 CORRECTSCOREY = 10
 INCORRECTSCOREX = CORRECTSCOREX
 INCORRECTSCOREY = (CORRECTSCOREY + 20)
@@ -122,7 +122,7 @@ class Observer():
     def display(self):
 
         # Set up font
-        self.font = pygame.font.Font('freesansbold.ttf', 20)
+        self.font = pygame.font.Font('comicsans.ttf', 20)
 
         #display the background
         self.screen.fill((112, 128, 144))
@@ -211,7 +211,7 @@ class Observer():
 
     #Updates the pandas dataframe with total buttons pressed and exports it to an excel file
     def ExportData(self):
-        df[1, 'Total Buttons Pressed'] = self.correct + self.incorrect
+        #self.df[1, 'Total Buttons Pressed'] = self.correct + self.incorrect
         self.df.to_csv("Data.csv",index=False)
 
     def game_tick(self):

@@ -38,7 +38,7 @@ SCREENX = 400
 SCREENY = 600
 ACTIVEBUTTONX = (SCREENX/2)-64 
 ACTIVEBUTTONY = (SCREENY/2)-64 
-CORRECTSCOREX = (SCREENX - 137)
+CORRECTSCOREX = (SCREENX - 135)
 CORRECTSCOREY = 10
 INCORRECTSCOREX = CORRECTSCOREX
 INCORRECTSCOREY = (CORRECTSCOREY + 20)
@@ -76,7 +76,7 @@ class Actor():
         self.joystick.init()
 
         #initialize pygame font
-        self.font = pygame.font.Font('freesansbold.ttf', 20)
+        self.font = pygame.font.Font("comicsans.ttf", 20)
 
         #load all images
         self.import_images()
@@ -276,13 +276,13 @@ class Actor():
             self.GenerateVibration(LOW_INTENSITY,NO_INTENSITY,2*DELAY)
         elif inputSignal == "11":
             self.CurrentVibration = self.VibrateRight
-            # high - high - low = RIGHTbutton
+            # low - high = RIGHTbutton
             self.GenerateVibration(LOW_INTENSITY,NO_INTENSITY,SHORT_DELAY)
             self.GenerateVibration(NO_INTENSITY,NO_INTENSITY,SHORT_DELAY)
             self.GenerateVibration(HIGH_INTENSITY,NO_INTENSITY,SHORT_DELAY)
         elif inputSignal == "12":
             self.CurrentVibration = self.VibrateLeft
-            # high - low - high = LEFTbutton
+            # high - low = LEFTbutton
             self.GenerateVibration(HIGH_INTENSITY,NO_INTENSITY,SHORT_DELAY)
             self.GenerateVibration(NO_INTENSITY,NO_INTENSITY,SHORT_DELAY)
             self.GenerateVibration(LOW_INTENSITY,NO_INTENSITY,SHORT_DELAY)

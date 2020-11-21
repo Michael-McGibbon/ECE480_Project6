@@ -42,6 +42,10 @@ INCORRECTSCOREX = CORRECTSCOREX
 INCORRECTSCOREY = (CORRECTSCOREY + 20)
 DANCINGSPRITEX = (SCREENX/2)-64 
 DANCINGSPRITEY = (SCREENY-200)
+LEVELX = 0
+LEVELY = 64
+VIBRATEX = 0
+VIBRATEY = (SCREENY/2)-160
 
 CORRECTBUBBLESX = 0
 CORRECTBUBBLESY = (SCREENY/2)-64
@@ -53,6 +57,8 @@ class Actor():
         self.recievedButton = -1
         self.correct = 0
         self.incorrect = 0
+        self.level = 1
+
 
         self.BUBBLESINDEX = 0
 
@@ -104,27 +110,55 @@ class Actor():
         Correct4 = pygame.image.load('ImageFiles/Bubbles/4Correct.png')
         Correct5 = pygame.image.load('ImageFiles/Bubbles/5Correct.png')
 
+        self.VibrateA = pygame.image.load('ImageFiles/Vibrations/AButton.png')
+        self.VibrateB = pygame.image.load('ImageFiles/Vibrations/BButton.png')
+        self.VibrateX = pygame.image.load('ImageFiles/Vibrations/XButton.png')
+        self.VibrateY = pygame.image.load('ImageFiles/Vibrations/YButton.png')
+        self.VibrateDown = pygame.image.load('ImageFiles/Vibrations/DownButton.png')
+        self.VibrateLeft = pygame.image.load('ImageFiles/Vibrations/LeftButton.png')
+        self.VibrateRight = pygame.image.load('ImageFiles/Vibrations/RightButton.png')
+        self.VibrateUp = pygame.image.load('ImageFiles/Vibrations/UpButton.png')
+        self.VibrateBlank = pygame.image.load('ImageFiles/Vibrations/BlankPattern.png')
+
         self.dance = (dance1, dance2, dance3, dance4, dance5, dance6)
 
         self.bubbles = (Correct0, Correct1, Correct2, Correct3, Correct4, Correct5)
 
-    def display(self):
-        #initalize the font
+        self.CurrentVibration = self.VibrateBlank
+        self.DisplayVibration = self.VibrateBlank
 
+    def display(self):
+
+        #display the background
         self.screen.fill((112, 128, 144))
         self.screen.blit(self.background,(0, 0))
+
+        #display the correct score 
         corrscore = self.font.render("Correct: " + str(self.correct), True, (255,255,255))
         self.screen.blit(corrscore, (CORRECTSCOREX, CORRECTSCOREY))
 
+        #display visual correctness
         self.screen.blit(self.bubbles[self.BUBBLESINDEX], (CORRECTBUBBLESX, CORRECTBUBBLESY))
 
+        #display the incorrect score
         incorrscore = self.font.render("Incorrect: " + str(self.incorrect), True, (255,255,255))
         self.screen.blit(incorrscore, (INCORRECTSCOREX, INCORRECTSCOREY))
 
+        #display hatlab logo
         self.screen.blit(self.msuhat, (0, 0))
+
+        #display the current level
+        currlevel = self.font.render("Level: " + str(self.level), True, (255,255,255))
+        self.screen.blit(currlevel, (LEVELX, LEVELY))
+
+        #display the vibration pattern
+        self.screen.blit(self.DisplayVibration, (VIBRATEX, VIBRATEY))
         
+        #display the dancing sprite
         #self.screen.blit(random.choice(self.dance), (DANCINGSPRITEX,DANCINGSPRITEY))
         #time.sleep(.05)
+
+
        
     def game_tick(self):
         done = False # Loop until the user clicks the close button.
@@ -188,32 +222,41 @@ class Actor():
     def VerifyButton(self, button):
         if self.recievedButton == button:
             self.correct += 1
+            self.DisplayVibration = self.VibrateBlank
             if self.BUBBLESINDEX <  5:
                 self.BUBBLESINDEX += 1
             else:
                 self.BUBBLESINDEX = 1
+                self.correct = 1
+                self.incorrect = 0 
+                self.level += 1
         else:
             self.incorrect += 1
             self.BUBBLESINDEX = 0
+            self.DisplayVibration = self.CurrentVibration
 
     def DecodeInput(self, inputSignal):
         self.recievedButton = inputSignal
         if inputSignal == "0":
+            self.CurrentVibration = self.VibrateA
             # low - low - low = Abutton
             self.GenerateVibration(LOW_INTENSITY, DELAY)
             self.GenerateVibration(LOW_INTENSITY, DELAY)
             self.GenerateVibration(LOW_INTENSITY, DELAY)
         elif inputSignal == "1":
+            self.CurrentVibration = self.VibrateB
             # low - low - high = BbUtton
             self.GenerateVibration(LOW_INTENSITY, DELAY)
             self.GenerateVibration(LOW_INTENSITY, DELAY)
             self.GenerateVibration(HIGH_INTENSITY, DELAY)
         elif inputSignal == "2":
+            self.CurrentVibration = self.VibrateX
             # low - high - low = Xbutton
             self.GenerateVibration(LOW_INTENSITY, DELAY)
             self.GenerateVibration(HIGH_INTENSITY, DELAY)
             self.GenerateVibration(LOW_INTENSITY, DELAY)
         elif inputSignal == "3":
+            self.CurrentVibration = self.VibrateY
             # low - high - high = Ybutton
             self.GenerateVibration(LOW_INTENSITY, DELAY)
             self.GenerateVibration(HIGH_INTENSITY, DELAY)
@@ -231,21 +274,25 @@ class Actor():
         elif inputSignal == "9":
             pass
         elif inputSignal == "10":
+            self.CurrentVibration = self.VibrateDown
             # high - high - high = DOWNbutton
             self.GenerateVibration(HIGH_INTENSITY, DELAY)
             self.GenerateVibration(HIGH_INTENSITY, DELAY)
             self.GenerateVibration(HIGH_INTENSITY, DELAY)
         elif inputSignal == "11":
+            self.CurrentVibration = self.VibrateRight
             # high - high - low = RIGHTbutton
             self.GenerateVibration(HIGH_INTENSITY, DELAY)
             self.GenerateVibration(HIGH_INTENSITY, DELAY)
             self.GenerateVibration(LOW_INTENSITY, DELAY)
         elif inputSignal == "12":
+            self.CurrentVibration = self.VibrateLeft
             # high - low - high = LEFTbutton
             self.GenerateVibration(HIGH_INTENSITY, DELAY)
             self.GenerateVibration(LOW_INTENSITY, DELAY)
             self.GenerateVibration(HIGH_INTENSITY, DELAY)
         elif inputSignal == "13":
+            self.CurrentVibration = self.VibrateUp
             # high - low - low = UPbutton
             self.GenerateVibration(HIGH_INTENSITY, DELAY)
             self.GenerateVibration(LOW_INTENSITY, DELAY)
@@ -255,9 +302,6 @@ class Actor():
         #turn on the game tick at the desired FPS
         tick = LoopingCall(self.game_tick)
         tick.start(1.0 / DESIRED_FPS)
-
-        #JEREMY: CHANGE "99.28.129.156" INTO "localhost"
-        #EVERYONE ELSE: DO THE OPPOSITE OF ABOVE
 
         d = connectProtocol(self.point, self.connection)
         print("actor")

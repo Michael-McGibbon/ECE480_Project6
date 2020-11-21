@@ -44,6 +44,11 @@ INCORRECTSCOREX = CORRECTSCOREX
 INCORRECTSCOREY = (CORRECTSCOREY + 20)
 DANCINGSPRITEX = (SCREENX/2)-64 
 DANCINGSPRITEY = (SCREENY-200)
+LEVELX = 0
+LEVELY = 64
+
+#CORRECTBUBBLESX = 0
+#CORRECTBUBBLESY = (SCREENY/2)-160
 
 
 class Observer():
@@ -58,6 +63,8 @@ class Observer():
         self.buttonList = []
         self.level = 0
         self.levelLength = levelLength
+        #self.BUBBLESINDEX = 0
+        self.correctinarow = 0
 
         #set up random seed based on current time
         a = datetime.now()
@@ -112,13 +119,21 @@ class Observer():
         self.background = pygame.image.load('ImageFiles/background.jpg')
         self.msuhat = pygame.image.load('ImageFiles/msuhat.png')
 
+        Correct0 = pygame.image.load('ImageFiles/Bubbles/0Correct.png')
+        Correct1 = pygame.image.load('ImageFiles/Bubbles/1Correct.png')
+        Correct2 = pygame.image.load('ImageFiles/Bubbles/2Correct.png')
+        Correct3 = pygame.image.load('ImageFiles/Bubbles/3Correct.png')
+        Correct4 = pygame.image.load('ImageFiles/Bubbles/4Correct.png')
+        Correct5 = pygame.image.load('ImageFiles/Bubbles/5Correct.png')
+
         self.dance = (dance1, dance2, dance3, dance4, dance5, dance6)
         self.imagelist = [(0,I0), (1,I1), (2,I2), (3,I3), (10,I4), (11,I5), (12,I6), (13,I7)]
+        self.bubbles = (Correct0, Correct1, Correct2, Correct3, Correct4, Correct5)
 
     def display(self):
 
         # Set up font
-        font = pygame.font.Font('freesansbold.ttf', 20)
+        self.font = pygame.font.Font('freesansbold.ttf', 20)
 
         #display the background
         self.screen.fill((112, 128, 144))
@@ -135,12 +150,19 @@ class Observer():
         #time.sleep(.05)
         
         #display the correct score 
-        corrscore = font.render("Correct: " + str(self.correct), True, (255,255,255))
+        corrscore = self.font.render("Correct: " + str(self.correct), True, (255,255,255))
         self.screen.blit(corrscore, (CORRECTSCOREX, CORRECTSCOREY))
         
         #display the incorrect score
-        incorrscore = font.render("Incorrect: " + str(self.incorrect), True, (255,255,255))
+        incorrscore = self.font.render("Incorrect: " + str(self.incorrect), True, (255,255,255))
         self.screen.blit(incorrscore, (INCORRECTSCOREX, INCORRECTSCOREY))
+
+        #display visual correctness
+        #self.screen.blit(self.bubbles[self.BUBBLESINDEX], (CORRECTBUBBLESX, CORRECTBUBBLESY))
+
+        #display the current level
+        currlevel = self.font.render("Level: " + str(self.level), True, (255,255,255))
+        self.screen.blit(currlevel, (LEVELX, LEVELY))
 
     def ChangeButton(self):
         self.activeButtonImage = (random.choice(self.buttonList)[1])
@@ -150,6 +172,7 @@ class Observer():
         self.level += 1
         self.incorrect = 0
         self.correct = 0
+        self.correctinarow = 0
 
         newButton = random.choice(self.imagelist)
         self.buttonList.append(newButton)
@@ -161,12 +184,14 @@ class Observer():
         self.timeRecieved = int(round(time.time() * 1000))
         if self.pressedButton == button:
             self.correct += 1
-            if self.correct == self.levelLength:
+            self.correctinarow += 1
+            if self.correctinarow == self.levelLength:
                 self.LevelUp()
             else:
                 self.ChangeButton()
         else:
             self.incorrect += 1
+            self.correctinarow = 0
         self.CollectData(button)
 
     #updates the pandas dataframe when buttons from observer and actor are recorded

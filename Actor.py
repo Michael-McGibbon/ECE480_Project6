@@ -239,19 +239,23 @@ class Actor():
     def DecodeInput(self, inputSignal):
         self.recievedButton = inputSignal
         if inputSignal == "0":
+            self.CurrentVibration = self.VibrateA
             # low = A Button
             self.GenerateVibration(NO_INTENSITY,LOW_INTENSITY,DELAY)
         elif inputSignal == "1":
+            self.CurrentVibration = self.VibrateB
             # low - high  = B button
             self.GenerateVibration(NO_INTENSITY,LOW_INTENSITY,SHORT_DELAY)
             self.GenerateVibration(NO_INTENSITY,NO_INTENSITY,SHORT_DELAY)
             self.GenerateVibration(NO_INTENSITY,HIGH_INTENSITY,SHORT_DELAY)
         elif inputSignal == "2":
+            self.CurrentVibration = self.VibrateX
             # high - low = X button
             self.GenerateVibration(NO_INTENSITY,HIGH_INTENSITY,SHORT_DELAY)
             self.GenerateVibration(NO_INTENSITY,NO_INTENSITY,SHORT_DELAY)
             self.GenerateVibration(NO_INTENSITY,LOW_INTENSITY,SHORT_DELAY)
         elif inputSignal == "3":
+            self.CurrentVibration = self.VibrateY
             # high = Y button
             self.GenerateVibration(NO_INTENSITY,HIGH_INTENSITY,DELAY)
         elif inputSignal == "4":
@@ -267,6 +271,7 @@ class Actor():
         elif inputSignal == "9":
             pass
         elif inputSignal == "10":
+            self.CurrentVibration = self.VibrateDown
             # low = DOWNbutton
             self.GenerateVibration(LOW_INTENSITY,NO_INTENSITY,2*DELAY)
         elif inputSignal == "11":
@@ -282,6 +287,7 @@ class Actor():
             self.GenerateVibration(NO_INTENSITY,NO_INTENSITY,SHORT_DELAY)
             self.GenerateVibration(LOW_INTENSITY,NO_INTENSITY,SHORT_DELAY)
         elif inputSignal == "13":
+            self.CurrentVibration = self.VibrateUp
             # high = UPbutton
             self.GenerateVibration(HIGH_INTENSITY,NO_INTENSITY,2*DELAY)
 

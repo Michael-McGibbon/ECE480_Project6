@@ -47,8 +47,6 @@ DANCINGSPRITEY = (SCREENY-200)
 LEVELX = 0
 LEVELY = 64
 
-#CORRECTBUBBLESX = 0
-#CORRECTBUBBLESY = (SCREENY/2)-160
 
 
 class Observer():
@@ -63,7 +61,6 @@ class Observer():
         self.buttonList = []
         self.level = 0
         self.levelLength = levelLength
-        #self.BUBBLESINDEX = 0
         self.correctinarow = 0
 
         #set up random seed based on current time
@@ -119,16 +116,8 @@ class Observer():
         self.background = pygame.image.load('ImageFiles/background.jpg')
         self.msuhat = pygame.image.load('ImageFiles/msuhat.png')
 
-        Correct0 = pygame.image.load('ImageFiles/Bubbles/0Correct.png')
-        Correct1 = pygame.image.load('ImageFiles/Bubbles/1Correct.png')
-        Correct2 = pygame.image.load('ImageFiles/Bubbles/2Correct.png')
-        Correct3 = pygame.image.load('ImageFiles/Bubbles/3Correct.png')
-        Correct4 = pygame.image.load('ImageFiles/Bubbles/4Correct.png')
-        Correct5 = pygame.image.load('ImageFiles/Bubbles/5Correct.png')
-
         self.dance = (dance1, dance2, dance3, dance4, dance5, dance6)
         self.imagelist = [(0,I0), (1,I1), (2,I2), (3,I3), (10,I4), (11,I5), (12,I6), (13,I7)]
-        self.bubbles = (Correct0, Correct1, Correct2, Correct3, Correct4, Correct5)
 
     def display(self):
 
@@ -156,9 +145,6 @@ class Observer():
         #display the incorrect score
         incorrscore = self.font.render("Incorrect: " + str(self.incorrect), True, (255,255,255))
         self.screen.blit(incorrscore, (INCORRECTSCOREX, INCORRECTSCOREY))
-
-        #display visual correctness
-        #self.screen.blit(self.bubbles[self.BUBBLESINDEX], (CORRECTBUBBLESX, CORRECTBUBBLESY))
 
         #display the current level
         currlevel = self.font.render("Level: " + str(self.level), True, (255,255,255))

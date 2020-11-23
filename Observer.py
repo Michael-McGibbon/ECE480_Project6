@@ -50,7 +50,7 @@ LEVELY = 64
 
 
 class Observer():
-    def __init__(self, ip, levelLength = 5):
+    def __init__(self, ip, maxLevels = 8):
         #intialize variables
         self.correct = 0
         self.incorrect = 0
@@ -60,8 +60,9 @@ class Observer():
         self.timeRecieved = 0
         self.buttonList = []
         self.level = 0
-        self.levelLength = levelLength
-        self.correctinarow = 0
+        self.maxLevels = maxLevels
+        self.correctInARow = 0
+        self.enabled = True
 
         #set up random seed based on current time
         a = datetime.now()
@@ -81,12 +82,12 @@ class Observer():
         self.joystick.init()
 
 
-
         #import images
         self.import_images()
+    
+        # Set up font
+        self.font = pygame.font.Font('comicsans.ttf', 20)
 
-        #level up to select a random button
-        self.LevelUp()
 
         #set up pandas dataframe for data collection
         self.df = pd.DataFrame(columns=['Level', 'Intended Button', 'Pressed Button','Correct/Incorrect', 'Time'])
@@ -94,7 +95,9 @@ class Observer():
         # set up twisted end point and connection channel
         self.point = TCP4ClientEndpoint(reactor, ip, 25565)
         self.connection = ObserverTransmit(self)
-
+        
+        #level up to select a random button
+        self.LevelUp()
 
     def import_images(self):
         I2 = pygame.image.load('ImageFiles/Buttons/Xbutton.png')
@@ -120,9 +123,6 @@ class Observer():
         self.imagelist = [(0,I0), (1,I1), (2,I2), (3,I3), (10,I4), (11,I5), (12,I6), (13,I7)]
 
     def display(self):
-
-        # Set up font
-        self.font = pygame.font.Font('comicsans.ttf', 20)
 
         #display the background
         self.screen.fill((112, 128, 144))
@@ -151,34 +151,47 @@ class Observer():
         self.screen.blit(currlevel, (LEVELX, LEVELY))
 
     def ChangeButton(self):
-        self.activeButtonImage = (random.choice(self.buttonList)[1])
-        self.activeButton = (random.choice(self.buttonList)[0])
+        newButton = random.choice(self.buttonList)
+        self.activeButtonImage = (newButton[1])
+        self.activeButton = (newButton[0])
+
+        self.display()
+        pygame.display.update()
 
     def LevelUp(self):
         self.level += 1
         self.incorrect = 0
         self.correct = 0
-        self.correctinarow = 0
+        self.correctInARow = 0
+
+        #if we're above the max number of levels, stop
+        if self.maxLevels < self.level:
+            #quit the game
+            self.enabled = False
+            reactor.stop()
+            pygame.quit()
+            return
 
         newButton = random.choice(self.imagelist)
         self.buttonList.append(newButton)
         self.imagelist.remove(newButton)
 
-        self.ChangeButton()
+        #automatically have the first value after a level up be the new button
+        self.activeButtonImage = (newButton[1])
+        self.activeButton = (newButton[0])
+
+        self.display()
+        pygame.display.update()
 
     def VerifyButton(self, button):
         self.timeRecieved = int(round(time.time() * 1000))
         if self.pressedButton == button:
             self.correct += 1
-            self.correctinarow += 1
-            if self.correctinarow == self.levelLength:
-                self.LevelUp()
-            else:
-                self.ChangeButton()
         else:
             self.incorrect += 1
-            self.correctinarow = 0
+            self.correctInARow = 0
         self.CollectData(button)
+        self.ChangeButton()
 
     #updates the pandas dataframe when buttons from observer and actor are recorded
     def CollectData(self, button):
@@ -217,56 +230,64 @@ class Observer():
         self.df.to_csv("Data.csv",index=False)
 
     def game_tick(self):
-        events = pygame.event.get()
-        for event in events:
+        if self.enabled == True:
+            events = pygame.event.get()
+            for event in events:
 
-            # Process input events
-            if event.type == pygame.QUIT: # If user clicked close.
-                self.done = True # Flag that we are done so we exit this loop
+                # Process input events
+                if event.type == pygame.QUIT: # If user clicked close.
+                    self.done = True # Flag that we are done so we exit this loop
 
-            elif event.type == pygame.JOYBUTTONDOWN:
-                # handle button presses, not dpad yet
-                buttons = self.joystick.get_numbuttons()
-                for i in range(buttons):
-                    button = self.joystick.get_button(i)
-                    if button == 1:
-                        #send the button press to actor.py
-                        self.connection.sendButton("O" + str(i))
-                        self.pressedButton = i
+                elif event.type == pygame.JOYBUTTONDOWN:
+                    # handle button presses, not dpad yet
+                    buttons = self.joystick.get_numbuttons()
+                    for i in range(buttons):
+                        button = self.joystick.get_button(i)
+                        if button == 1:
+                            #send the button press to actor.py
+                            if i == self.activeButton:
+                                self.connection.sendButton("O" + str(i))
+                                self.pressedButton = i
+                                self.enabled = False
 
-            elif event.type == pygame.JOYHATMOTION:
-                # handle dpad presses
-                hats = self.joystick.get_numhats()
-                for i in range(hats):
-                    hat = self.joystick.get_hat(i)
-                    if (hat in ACCEPTED_HATS):
-                        if hat == (0,1):
-                            hatValue = 13
-                        elif hat == (0,-1):
-                            hatValue = 10
-                        elif hat == (1,0):
-                            hatValue = 11
-                        elif hat == (-1,0):
-                            hatValue = 12
+                elif event.type == pygame.JOYHATMOTION:
+                    # handle dpad presses
+                    hats = self.joystick.get_numhats()
+                    for i in range(hats):
+                        hat = self.joystick.get_hat(i)
+                        if (hat in ACCEPTED_HATS):
+                            if hat == (0,1):
+                                hatValue = 13
+                            elif hat == (0,-1):
+                                hatValue = 10
+                            elif hat == (1,0):
+                                hatValue = 11
+                            elif hat == (-1,0):
+                                hatValue = 12
 
-                        #send the hat press to actor.py
-                        self.connection.sendButton("O" + str(hatValue))
-                        self.pressedButton = hatValue
+                            if hatValue == self.activeButton:
+                                #send the hat press to actor.py
+                                self.connection.sendButton("O" + str(hatValue))
+                                self.pressedButton = hatValue
+                                self.enabled = False
 
-            self.timePressed = int(round(time.time() * 1000))
-            # elif event.type == pygame.JOYBUTTONUP:
-            #button go up :(
+                self.timePressed = int(round(time.time() * 1000))
+                # elif event.type == pygame.JOYBUTTONUP:
+                #button go up :(
     
         
-            #redraw()
+                #redraw()
 
-            self.display()
-            pygame.display.update()
 
-            if self.done == True:
-                #quit the game
-                pygame.quit()
-                reactor.stop()
+
+                if self.done == True:
+                    #quit the game
+                    reactor.stop()
+                    pygame.quit()
+
+                else:
+                    self.display()
+                    pygame.display.update()
 
     def Run(self):
         # Set up a looping call every 1/30th of a second to run your game tick
@@ -277,6 +298,9 @@ class Observer():
         print("observer")
         reactor.run()
 
+    def EnableGameLoop(self):
+        self.enabled = True
+
 # Set up anything else twisted here, like listening sockets
 class ObserverTransmit(Protocol):
 
@@ -284,13 +308,21 @@ class ObserverTransmit(Protocol):
         self.observer = observer
 
     def connectionMade(self):
-       # self.transport.write(b"Observer Connected")
         pass
 
     def dataReceived(self, data):
         decoded_data = data.decode()
+        print(decoded_data[1:-0])
+        #ignore the leading character tag of A, read the digits afterwards
+        #if all other digits are numeric in value, it's a basic button press
         if decoded_data[1:].isnumeric(): 
+            self.observer.EnableGameLoop()
             self.observer.VerifyButton(int(decoded_data[1:]))
+        # if the last digit is an "L", it's a level up tag
+        elif decoded_data[-1] == "L":
+            self.observer.EnableGameLoop()
+            self.observer.LevelUp()
+            
         else:
             print(decoded_data)
     
@@ -300,9 +332,9 @@ class ObserverTransmit(Protocol):
 def main():
     #JEREMY: CHANGE "99.28.129.156" INTO "localhost"
     #EVERYONE ELSE: DO THE OPPOSITE OF ABOVE
-    ip = "99.28.129.156"
-    levelLength = 5
-    observer = Observer(ip,levelLength)
+    ip = "localhost"
+    maxLevels = 8
+    observer = Observer(ip,maxLevels)
     observer.Run()
     observer.ExportData()
 

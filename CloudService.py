@@ -28,11 +28,12 @@ class TactileFeedback(Protocol):
 
     def dataReceived(self, data):
         decoded_data = data.decode()
+        # if it's from the actor, send it to the observer
         if decoded_data[0] == "A":
             self.factory.connections[0].transport.write(data)
+        # if it's from the observer, send it to the actor
         elif decoded_data[0] == "O":
             self.factory.connections[1].transport.write(data)
-
 
     def connectionLost(self, reason):
         self.factory.connections.remove(self)

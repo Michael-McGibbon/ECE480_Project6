@@ -89,7 +89,7 @@ class Observer():
         self.LevelUp()
 
         #set up pandas dataframe for data collection
-        self.df = pd.DataFrame(columns=['Intended Button', 'Pressed Button','Correct/Incorrect', 'Time','Total Buttons Pressed'])
+        self.df = pd.DataFrame(columns=['Level', 'Intended Button', 'Pressed Button','Correct/Incorrect', 'Time'])
 
         # set up twisted end point and connection channel
         self.point = TCP4ClientEndpoint(reactor, ip, 25565)
@@ -185,6 +185,8 @@ class Observer():
         buttonStr = self.ButtonValueConversion(button)
         pressedButtonStr = self.ButtonValueConversion(self.pressedButton)
         timeStamp = self.timeRecieved - self.timePressed
+        if self.correct == 0 and self.incorrect == 0:
+            self.df = self.df.append({'Level': self.level}, ignore_index=True)
         if self.pressedButton == button:
             self.df = self.df.append({'Intended Button': pressedButtonStr, 'Pressed Button': buttonStr, 'Correct/Incorrect': 'Correct', 'Time': timeStamp}, ignore_index=True)
         else:

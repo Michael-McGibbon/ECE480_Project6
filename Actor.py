@@ -382,7 +382,7 @@ class ActorTransmit(Protocol):
 def main():
     #JEREMY: CHANGE "99.28.129.156" INTO "localhost"
     #EVERYONE ELSE: DO THE OPPOSITE OF ABOVE
-    ip = "localhost"
+    ip = "99.28.129.156"
     maxLevels = 8
     actor = Actor(ip, maxLevels)
     actor.Run()

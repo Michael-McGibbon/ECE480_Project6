@@ -308,7 +308,9 @@ class ObserverTransmit(Protocol):
         self.observer = observer
 
     def connectionMade(self):
-        pass
+        #send a message to mark this one as the observer and be saved on the server as such
+        message = "O"
+        self.transport.write(message.encode("utf-8"))
 
     def dataReceived(self, data):
         decoded_data = data.decode()

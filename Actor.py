@@ -172,12 +172,11 @@ class Actor():
             
             events = pygame.event.get()
             for event in events:
+                if event.type == pygame.QUIT: # If user clicked close.
+                        done = True # Flag that we are done so we exit this loop
                 if self.enabled:
                     # Process input events
-                
-                    if event.type == pygame.QUIT: # If user clicked close.
-                        done = True # Flag that we are done so we exit this loop
-                    elif event.type == pygame.JOYBUTTONDOWN:
+                    if event.type == pygame.JOYBUTTONDOWN:
                         # handle button presses, not dpad yet
                         buttons = self.joystick.get_numbuttons()
                         for i in range(buttons):
@@ -361,7 +360,9 @@ class ActorTransmit(Protocol):
         self.actor = actor
 
     def connectionMade(self):
-        pass
+        #send a message to list this one as the actor and be saved as such
+        message = "A"
+        self.transport.write(message.encode("utf-8"))
 
     def dataReceived(self, data):
         decoded_data = data.decode()

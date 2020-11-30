@@ -22,22 +22,36 @@ class TactileFeedback(Protocol):
         self.factory = factory
 
     def connectionMade(self):
-        self.factory.connections.append(self)
-        print("Connection Established: {} Total".format(len(self.factory.connections)))
         self.transport.write(b"Connection Established to Server")
 
     def dataReceived(self, data):
         decoded_data = data.decode()
-        if decoded_data[0] == "A":
-            self.factory.connections[0].transport.write(data)
-        elif decoded_data[0] == "O":
-            self.factory.connections[1].transport.write(data)
+        # if still setting up actor and observer
+        if self.factory.actor == None:
+            if decoded_data == "A":
+                print("Connection Established: Actor")
+                self.factory.actor = self
+        if self.factory.observer == None:
+            if decoded_data == "O":
+                print("Connection Established: Observer")
+                self.factory.observer = self
 
+        # messages recieved are valid and able to be sent
+        else:
+            # if it's from the actor, send it to the observer
+            if decoded_data[0] == "A":
+                self.factory.observer.transport.write(data)
+            # if it's from the observer, send it to the actor
+            elif decoded_data[0] == "O":
+                self.factory.actor.transport.write(data)
 
     def connectionLost(self, reason):
-        self.factory.connections.remove(self)
-        print("Connection Lost: {} Total".format(len(self.factory.connections)))
-
+        if self.factory.actor == self:
+            print("Connection Lost: Actor")
+            self.factory.actor = None
+        elif self.factory.observer == self:
+            print("Connection Lost: Observer")
+            self.factory.observer = None
 
 
 class TactileFeedbackFactory(Factory):
@@ -46,7 +60,8 @@ class TactileFeedbackFactory(Factory):
     protocol = TactileFeedback
 
     def __init__(self):
-        self.connections = []
+        self.actor = None
+        self.observer = None
 
     def buildProtocol(self, addr):
         return TactileFeedback(self)

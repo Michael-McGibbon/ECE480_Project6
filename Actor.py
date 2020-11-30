@@ -98,31 +98,9 @@ class Actor():
         """
         self.background = pygame.image.load('ImageFiles/background.jpg')
         self.msuhat = pygame.image.load('ImageFiles/msuhat.png')
-        dance1 = pygame.image.load('ImageFiles/DancingGuy/Dance1.png')
-        dance2 = pygame.image.load('ImageFiles/DancingGuy/Dance2.png')
-        dance3 = pygame.image.load('ImageFiles/DancingGuy/Dance3.png')
-        dance4 = pygame.image.load('ImageFiles/DancingGuy/Dance4.png')
-        dance5 = pygame.image.load('ImageFiles/DancingGuy/Dance5.png')
-        dance6 = pygame.image.load('ImageFiles/DancingGuy/Dance6.png')
+        
 
-        Correct0 = pygame.image.load('ImageFiles/Bubbles/0Correct.png')
-        Correct1 = pygame.image.load('ImageFiles/Bubbles/1Correct.png')
-        Correct2 = pygame.image.load('ImageFiles/Bubbles/2Correct.png')
-        Correct3 = pygame.image.load('ImageFiles/Bubbles/3Correct.png')
-        Correct4 = pygame.image.load('ImageFiles/Bubbles/4Correct.png')
-        Correct5 = pygame.image.load('ImageFiles/Bubbles/5Correct.png')
-
-        self.VibrateA = pygame.image.load('ImageFiles/Vibrations/AButton.png')
-        self.VibrateB = pygame.image.load('ImageFiles/Vibrations/BButton.png')
-        self.VibrateX = pygame.image.load('ImageFiles/Vibrations/XButton.png')
-        self.VibrateY = pygame.image.load('ImageFiles/Vibrations/YButton.png')
-        self.VibrateDown = pygame.image.load('ImageFiles/Vibrations/DownButton.png')
-        self.VibrateLeft = pygame.image.load('ImageFiles/Vibrations/LeftButton.png')
-        self.VibrateRight = pygame.image.load('ImageFiles/Vibrations/RightButton.png')
-        self.VibrateUp = pygame.image.load('ImageFiles/Vibrations/UpButton.png')
-        self.VibrateBlank = pygame.image.load('ImageFiles/Vibrations/BlankPattern.png')
-
-        self.dance = (dance1, dance2, dance3, dance4, dance5, dance6)
+        
 
         self.bubbles = (Correct0, Correct1, Correct2, Correct3, Correct4, Correct5)
 
@@ -299,35 +277,6 @@ class Actor():
         d = connectProtocol(self.point, self.connection)
         print("actor")
         reactor.run()
-
-
-"""Get individual sprites from sprite sheets"""
- 
-class SpriteSheet(object):
-#use to get images from a sprite sheet.
- 
-    def __init__(self, file_name):
-        #Pass the file name of the sprite sheet.
- 
-        # Load the sprite sheet.
-        self.sprite_sheet = pygame.image.load(file_name).convert()
- 
- 
-    def get_image(self, x, y, width, height):
-        """ get a single sprite from a spritesheet
-            pass x, y coordinates of sprite
-            and width and height of the sprite. """
- 
-        # make new blank image
-        image = pygame.Surface([width, height]).convert()
- 
-        # copy sprite from spritesheet onto smaller image
-        image.blit(self.sprite_sheet, (0, 0), (x, y, width, height))
- 
-        #transparent color (set as black)
-        image.set_colorkey(constants.BLACK)
- 
-        return image
 
 
 class ActorTransmit(Protocol):

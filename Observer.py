@@ -77,6 +77,9 @@ class Observer():
         pygame.display.set_caption("Observer") #name the program
 
         pygame.joystick.init() # Initialize the joysticks.
+        if pygame.joystick.get_count() == 0:
+            print("ERROR: No joystick has been plugged in")
+            exit(0)
         self.joystick = pygame.joystick.Joystick(0)
         self.joystick.init()
 
@@ -277,6 +280,24 @@ class Observer():
         currlevel = self.font.render("Level: " + str(self.level), True, (255,255,255))
         self.screen.blit(currlevel, (LEVELX, LEVELY))
 
+    def Dance(self,button):
+            if button == 0:
+                self.screen.blit(self.crisscrossdance, (DANCINGSPRITEX, DANCINGSPRITEY))
+            elif button == 1:
+                self.screen.blit(self.egyptiandance, (DANCINGSPRITEX, DANCINGSPRITEY))
+            elif button == 2:
+                self.screen.blit(self.lawnmowerdance, (DANCINGSPRITEX, DANCINGSPRITEY))
+            elif button == 3: 
+                self.screen.blit(self.scubadance, (DANCINGSPRITEX, DANCINGSPRITEY))
+            elif button == 10:
+                self.screen.blit(self.snapdance, (DANCINGSPRITEX, DANCINGSPRITEY))
+            elif button == 11:
+                self.screen.blit(self.splitdance, (DANCINGSPRITEX, DANCINGSPRITEY))
+            elif button == 12:
+                self.screen.blit(self.sprinklerdance, (DANCINGSPRITEX, DANCINGSPRITEY))
+            elif button == 13:
+                self.screen.blit(self.wavedance, (DANCINGSPRITEX, DANCINGSPRITEY))
+
     def ChangeButton(self):
         self.activeButtonImage = (random.choice(self.buttonList)[1])
         self.activeButton = (random.choice(self.buttonList)[0])
@@ -298,23 +319,10 @@ class Observer():
         if self.pressedButton == button:
             self.correct += 1
             self.correctinarow += 1
-            if button == 0:
-                self.screen.blit(self.crisscrossdance, (DANCINGSPRITEX, DANCINGSPRITEY))
-            if button == 1:
-                self.screen.blit(self.egyptiandance, (DANCINGSPRITEX, DANCINGSPRITEY))
-            if button == 2:
-                self.screen.blit(self.lawnmowerdance, (DANCINGSPRITEX, DANCINGSPRITEY))
-            if button == 3: 
-                self.screen.blit(self.scubadance, (DANCINGSPRITEX, DANCINGSPRITEY))
-            if button == 10:
-                self.screen.blit(self.snapdance, (DANCINGSPRITEX, DANCINGSPRITEY))
-            if button == 11:
-                self.screen.blit(self.splitdance, (DANCINGSPRITEX, DANCINGSPRITEY))
-            if button == 12:
-                self.screen.blit(self.sprinklerdance, (DANCINGSPRITEX, DANCINGSPRITEY))
-            else:
-                self.screen.blit(self.wavedance, (DANCINGSPRITEX, DANCINGSPRITEY))
-                
+            
+            self.Dance(button)
+            
+
             if self.correctinarow == self.levelLength:
                 self.LevelUp()
             else:
@@ -424,10 +432,11 @@ class ObserverTransmit(Protocol):
 
     def __init__(self, observer):
         self.observer = observer
+        self.connected = False
 
     def connectionMade(self):
        # self.transport.write(b"Observer Connected")
-        pass
+       self.connected = True
 
     def dataReceived(self, data):
         decoded_data = data.decode()
@@ -437,13 +446,17 @@ class ObserverTransmit(Protocol):
             print(decoded_data)
     
     def sendButton(self, button):
-        self.transport.write(button.encode("utf-8"))
+        if self.connected:
+            self.transport.write(button.encode("utf-8"))
+        else:
+            print("ERROR: No connection to server established")
 
 def main():
     #JEREMY: CHANGE "99.28.129.156" INTO "localhost"
     #EVERYONE ELSE: DO THE OPPOSITE OF ABOVE
-    ip = "99.28.129.156"
-    levelLength = 5
+    ip = "localhost"
+    #ip = "99.28.129.156"
+    levelLength = 1
     observer = Observer(ip,levelLength)
     observer.Run()
     observer.ExportData()

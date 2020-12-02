@@ -55,14 +55,18 @@ CORRECTBUBBLESY = (SCREENY/2)-64
 
 
 class Actor():
-    def __init__(self, ip):
+    def __init__(self, ip, maxLevels):
         self.recievedButton = -1
         self.correct = 0
         self.incorrect = 0
         self.level = 1
 
+        self.enabled = False
+        self.seenButtons = []
+        self.desiredButton = -1
+        self.maxLevels = maxLevels
 
-        self.BUBBLESINDEX = 0
+        self.bubblesIndex = 0
 
         #intialize pygame
         pygame.init() # initialize the game and necessary parts
@@ -72,6 +76,9 @@ class Actor():
         pygame.display.set_caption("Actor") #name the program
  
         pygame.joystick.init() # Initialize the joysticks.
+        if pygame.joystick.get_count() == 0:
+            print("ERROR: No joystick has been plugged in")
+            exit(0)
         self.joystick = pygame.joystick.Joystick(0)
         self.joystick.init()
 
@@ -80,6 +87,11 @@ class Actor():
 
         #load all images
         self.import_images()
+
+        #display all images
+        self.display()
+        pygame.display.update()
+
 
         # prepare all twisted
         self.point = TCP4ClientEndpoint(reactor, ip, 25565)
@@ -123,7 +135,7 @@ class Actor():
         self.screen.blit(corrscore, (CORRECTSCOREX, CORRECTSCOREY))
 
         #display visual correctness
-        self.screen.blit(self.bubbles[self.BUBBLESINDEX], (CORRECTBUBBLESX, CORRECTBUBBLESY))
+        self.screen.blit(self.bubbles[self.bubblesIndex], (CORRECTBUBBLESX, CORRECTBUBBLESY))
 
         #display the incorrect score
         incorrscore = self.font.render("Incorrect: " + str(self.incorrect), True, (255,255,255))
@@ -150,42 +162,41 @@ class Actor():
 
         events = pygame.event.get()
         for event in events:
-            # Process input events
             if event.type == pygame.QUIT: # If user clicked close.
-                done = True # Flag that we are done so we exit this loop
-            elif event.type == pygame.JOYBUTTONDOWN:
-                # handle button presses, not dpad yet
-                buttons = self.joystick.get_numbuttons()
-                for i in range(buttons):
-                    button = self.joystick.get_button(i)
-                    if button == 1:
+                    done = True # Flag that we are done so we exit this loop
+            if self.enabled:
+                # Process input events
+                if event.type == pygame.JOYBUTTONDOWN:
+                    # handle button presses, not dpad yet
+                    buttons = self.joystick.get_numbuttons()
+                    for i in range(buttons):
+                        button = self.joystick.get_button(i)
+                        if button == 1:
 
-                        #send the button press to the cloud service
-                        self.connection.sendButton("A" + str(i))
-                        self.VerifyButton(str(i))
+                            #send the button press to the cloud service
+                            self.connection.sendButton("A" + str(i))
+                            self.VerifyButton(str(i))
 
+                elif event.type == pygame.JOYHATMOTION:
+                    # handle dpad presses
+                    hats = self.joystick.get_numhats()
+                    for i in range(hats):
+                        hat = self.joystick.get_hat(i)
+                        if (hat in ACCEPTED_HATS):
+                            if hat == (0,1):
+                                hatValue = 13
+                            elif hat == (0,-1):
+                                hatValue = 10
+                            elif hat == (1,0):
+                                hatValue = 11
+                            elif hat == (-1,0):
+                                hatValue = 12
 
-            elif event.type == pygame.JOYHATMOTION:
-                # handle dpad presses
-                hats = self.joystick.get_numhats()
-                for i in range(hats):
-                    hat = self.joystick.get_hat(i)
-                    if (hat in ACCEPTED_HATS):
-                        if hat == (0,1):
-                            hatValue = 13
-                        elif hat == (0,-1):
-                            hatValue = 10
-                        elif hat == (1,0):
-                            hatValue = 11
-                        elif hat == (-1,0):
-                            hatValue = 12
-
-                        # create a new connection and send it to the Cloud Service
-                        self.connection.sendButton("A" + str(hatValue))
-                        self.VerifyButton(str(hatValue))
-
-            # elif event.type == pygame.JOYBUTTONUP:
-            #button go up :(
+                            # create a new connection and send it to the Cloud Service
+                            self.connection.sendButton("A" + str(hatValue))
+                            self.VerifyButton(str(hatValue))
+                # elif event.type == pygame.JOYBUTTONUP:
+                    #button go up :(
     
         
         #redraw()
@@ -198,29 +209,49 @@ class Actor():
             pygame.quit()
             reactor.stop()
 
+    def LevelUp(self):
+        self.bubblesIndex = 0
+        self.correct = 0
+        self.incorrect = 0 
+        self.level += 1
+        self.connection.sendLevelUp()
+
+        # if we're at max levels, close it
+        if self.maxLevels < self.level:
+            #quit the game
+            """
+            self.enabled = False
+            reactor.stop()
+            pygame.quit()
+            """
+    
     def GenerateVibration(self, left_intensity, right_intensity, duration):
         XInput.set_vibration(0, left_intensity, right_intensity)
         time.sleep(duration)
         XInput.set_vibration(0,NO_INTENSITY,NO_INTENSITY)
      
     def VerifyButton(self, button):
+        self.enabled = False
         if self.recievedButton == button:
             self.correct += 1
             self.DisplayVibration = self.VibrateBlank
-            if self.BUBBLESINDEX <  5:
-                self.BUBBLESINDEX += 1
-            else:
-                self.BUBBLESINDEX = 1
-                self.correct = 1
-                self.incorrect = 0 
-                self.level += 1
+            if self.desiredButton == button:
+                if self.bubblesIndex <  5:
+                    self.bubblesIndex += 1
+                # hit the level up trigger
+                else:
+                    self.LevelUp()
+                    
         else:
             self.incorrect += 1
-            self.BUBBLESINDEX = 0
             self.DisplayVibration = self.CurrentVibration
 
     def DecodeInput(self, inputSignal):
+        self.enabled = True
         self.recievedButton = inputSignal
+        if self.recievedButton not in self.seenButtons:
+            self.desiredButton = self.recievedButton
+            self.seenButtons.append(self.desiredButton)
         if inputSignal == "0":
             self.CurrentVibration = self.VibrateA
             # low = A Button
@@ -288,9 +319,11 @@ class ActorTransmit(Protocol):
 
     def __init__(self, actor):
         self.actor = actor
+        self.connected = False
 
     def connectionMade(self):
-        #self.transport.write(b"Actor Connected")
+        self.transport.write(b"A")
+        self.connected = True
         pass
 
     def dataReceived(self, data):
@@ -301,14 +334,23 @@ class ActorTransmit(Protocol):
             print(decoded_data)
 
     def sendButton(self, button):
-        self.transport.write(button.encode("utf-8"))
+        if self.connected:
+            self.transport.write(button.encode("utf-8"))
+        else:
+            print("ERROR: No connection to server established")
+
+    def sendLevelUp(self):
+        message = "L"
+        self.transport.write(message.encode("utf-8"))
 
 
 def main():
     #JEREMY: CHANGE "99.28.129.156" INTO "localhost"
     #EVERYONE ELSE: DO THE OPPOSITE OF ABOVE
-    ip = "99.28.129.156"
-    actor = Actor(ip)
+    ip = "localhost"
+    #ip = "99.28.129.156"
+    maxLevels = 5
+    actor = Actor(ip, 5)
     actor.Run()
 
 

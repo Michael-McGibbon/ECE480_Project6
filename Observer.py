@@ -106,12 +106,6 @@ class Observer():
         I6 = pygame.image.load('ImageFiles/Buttons/LEFTbutton.png')
         I5 = pygame.image.load('ImageFiles/Buttons/RIGHTbutton.png')
 
-        dance1 = pygame.image.load('ImageFiles/DancingGuy/Dance1.png')
-        dance2 = pygame.image.load('ImageFiles/DancingGuy/Dance2.png')
-        dance3 = pygame.image.load('ImageFiles/DancingGuy/Dance3.png')
-        dance4 = pygame.image.load('ImageFiles/DancingGuy/Dance4.png')
-        dance5 = pygame.image.load('ImageFiles/DancingGuy/Dance5.png')
-        dance6 = pygame.image.load('ImageFiles/DancingGuy/Dance6.png')
 
         dance_crisscross1 = pygame.image.load('ImageFiles/Dancer-Crisscross/crisscross_1.png')
         dance_crisscross2 = pygame.image.load('ImageFiles/Dancer-Crisscross/crisscross_2.png')

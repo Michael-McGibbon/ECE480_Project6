@@ -86,20 +86,25 @@ class Actor():
         self.connection = ActorTransmit(self)
 
     def import_images(self):
-        """
-        I2 = pygame.image.load('ImageFiles/Xbutton.png')
-        I3 = pygame.image.load('ImageFiles/Ybutton.png')
-        I0 = pygame.image.load('ImageFiles/Abutton.png')
-        I1 = pygame.image.load('ImageFiles/Bbutton.png')
-        I7 = pygame.image.load('ImageFiles/UPbutton.png')
-        I4 = pygame.image.load('ImageFiles/DOWNbutton.png')
-        I6 = pygame.image.load('ImageFiles/LEFTbutton.png')
-        I5 = pygame.image.load('ImageFiles/RIGHTbutton.png')
-        """
         self.background = pygame.image.load('ImageFiles/background.jpg')
         self.msuhat = pygame.image.load('ImageFiles/msuhat.png')
         
+        self.VibrateA = pygame.image.load('ImageFiles/Vibrations/AButton.png')
+        self.VibrateB = pygame.image.load('ImageFiles/Vibrations/BButton.png')
+        self.VibrateX = pygame.image.load('ImageFiles/Vibrations/XButton.png')
+        self.VibrateY = pygame.image.load('ImageFiles/Vibrations/YButton.png')
+        self.VibrateDown = pygame.image.load('ImageFiles/Vibrations/DownButton.png')
+        self.VibrateLeft = pygame.image.load('ImageFiles/Vibrations/LeftButton.png')
+        self.VibrateRight = pygame.image.load('ImageFiles/Vibrations/RightButton.png')
+        self.VibrateUp = pygame.image.load('ImageFiles/Vibrations/UpButton.png')
+        self.VibrateBlank = pygame.image.load('ImageFiles/Vibrations/BlankPattern.png')
 
+        Correct0 = pygame.image.load('ImageFiles/Bubbles/0Correct.png')
+        Correct1 = pygame.image.load('ImageFiles/Bubbles/1Correct.png')
+        Correct2 = pygame.image.load('ImageFiles/Bubbles/2Correct.png')
+        Correct3 = pygame.image.load('ImageFiles/Bubbles/3Correct.png')
+        Correct4 = pygame.image.load('ImageFiles/Bubbles/4Correct.png')
+        Correct5 = pygame.image.load('ImageFiles/Bubbles/5Correct.png')
         
 
         self.bubbles = (Correct0, Correct1, Correct2, Correct3, Correct4, Correct5)

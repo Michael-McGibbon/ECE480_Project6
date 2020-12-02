@@ -328,18 +328,8 @@ class Observer():
         self.timeRecieved = int(round(time.time() * 1000))
         if self.pressedButton == button:
             self.correct += 1
-            self.correctinarow += 1
-            
-            self.Dance(button)
-            
-
-            if self.correctinarow == self.levelLength:
-                self.LevelUp()
-            else:
-                self.ChangeButton()
         else:
             self.incorrect += 1
-            self.correctInARow = 0
         self.CollectData(button)
         self.ChangeButton()
 
@@ -481,9 +471,9 @@ class ObserverTransmit(Protocol):
 def main():
     #JEREMY: CHANGE "99.28.129.156" INTO "localhost"
     #EVERYONE ELSE: DO THE OPPOSITE OF ABOVE
-    ip = "localhost"
-    #ip = "99.28.129.156"
-    maxLevels = 1
+    #ip = "localhost"
+    ip = "99.28.129.156"
+    maxLevels = 3
     observer = Observer(ip,maxLevels)
     observer.Run()
     observer.ExportData()

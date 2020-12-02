@@ -106,7 +106,13 @@ class Observer():
         I6 = pygame.image.load('ImageFiles/Buttons/LEFTbutton.png')
         I5 = pygame.image.load('ImageFiles/Buttons/RIGHTbutton.png')
 
-
+        dance1 = pygame.image.load('ImageFiles/DancingGuy/Dance1.png')
+        dance2 = pygame.image.load('ImageFiles/DancingGuy/Dance2.png')
+        dance3 = pygame.image.load('ImageFiles/DancingGuy/Dance3.png')
+        dance4 = pygame.image.load('ImageFiles/DancingGuy/Dance4.png')
+        dance5 = pygame.image.load('ImageFiles/DancingGuy/Dance5.png')
+        dance6 = pygame.image.load('ImageFiles/DancingGuy/Dance6.png')
+        
         dance_crisscross1 = pygame.image.load('ImageFiles/Dancer-Crisscross/crisscross_1.png')
         dance_crisscross2 = pygame.image.load('ImageFiles/Dancer-Crisscross/crisscross_2.png')
         dance_crisscross3 = pygame.image.load('ImageFiles/Dancer-Crisscross/crisscross_3.png')
@@ -216,23 +222,8 @@ class Observer():
         dance_wave8 = pygame.image.load('ImageFiles/Dancer-Wave/wave_8.png')
         dance_wave9 = pygame.image.load('ImageFiles/Dancer-Wave/wave_9.png')
         dance_wave10 = pygame.image.load('ImageFiles/Dancer-Wave/wave_10.png')
+        
 
-        Correct0 = pygame.image.load('ImageFiles/Bubbles/0Correct.png')
-        Correct1 = pygame.image.load('ImageFiles/Bubbles/1Correct.png')
-        Correct2 = pygame.image.load('ImageFiles/Bubbles/2Correct.png')
-        Correct3 = pygame.image.load('ImageFiles/Bubbles/3Correct.png')
-        Correct4 = pygame.image.load('ImageFiles/Bubbles/4Correct.png')
-        Correct5 = pygame.image.load('ImageFiles/Bubbles/5Correct.png')
-
-        self.VibrateA = pygame.image.load('ImageFiles/Vibrations/AButton.png')
-        self.VibrateB = pygame.image.load('ImageFiles/Vibrations/BButton.png')
-        self.VibrateX = pygame.image.load('ImageFiles/Vibrations/XButton.png')
-        self.VibrateY = pygame.image.load('ImageFiles/Vibrations/YButton.png')
-        self.VibrateDown = pygame.image.load('ImageFiles/Vibrations/DownButton.png')
-        self.VibrateLeft = pygame.image.load('ImageFiles/Vibrations/LeftButton.png')
-        self.VibrateRight = pygame.image.load('ImageFiles/Vibrations/RightButton.png')
-        self.VibrateUp = pygame.image.load('ImageFiles/Vibrations/UpButton.png')
-        self.VibrateBlank = pygame.image.load('ImageFiles/Vibrations/BlankPattern.png')
         self.background = pygame.image.load('ImageFiles/background.jpg')
         self.msuhat = pygame.image.load('ImageFiles/msuhat.png')
 

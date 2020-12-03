@@ -306,6 +306,8 @@ class Observer():
         self.correct = 0
         self.correctinarow = 0
 
+        self.df = self.df.append({'Level': self.level}, ignore_index=True)
+
         #if we're above the max number of levels, stop
         if self.maxLevels < self.level:
             #quit the game
@@ -338,8 +340,6 @@ class Observer():
         buttonStr = self.ButtonValueConversion(button)
         pressedButtonStr = self.ButtonValueConversion(self.pressedButton)
         timeStamp = self.timeRecieved - self.timePressed
-        if self.correct == 0 and self.incorrect == 0:
-            self.df = self.df.append({'Level': self.level}, ignore_index=True)
         if self.pressedButton == button:
             self.df = self.df.append({'Intended Button': pressedButtonStr, 'Pressed Button': buttonStr, 'Correct/Incorrect': 'Correct', 'Time': timeStamp}, ignore_index=True)
         else:

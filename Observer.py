@@ -383,6 +383,7 @@ class Observer():
         # Check the button versus the sent button
         if self.pressedButton == button:
             self.correct += 1
+            #self.Dance()
         else:
             self.incorrect += 1
 

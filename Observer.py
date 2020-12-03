@@ -10,7 +10,10 @@ GameDemo2.py
 # Background Image: https://depositphotos.com/stock-photos/dancefloor.html?qview=9919783 - Will need to find roalty free :) 
 """
 
-# imports
+#########################################################
+# Imports
+#########################################################
+# Default imports as well as initalize next imports
 import pygame
 import time
 import random
@@ -18,38 +21,52 @@ import XInput
 import pandas as pd
 
 # twisted imports
+# Twisted is the python library which handles cloud services and netcode
 from twisted.internet import reactor
 from twisted.internet.protocol import Protocol
 from twisted.internet.endpoints import TCP4ClientEndpoint, connectProtocol
 from twisted.internet.task import LoopingCall
 
 #random imports
+# Random imports for handling seeds and which button gets added
 from random import seed
 from random import randint
 
 #datetime imports
+# Datetime imports for truely random seed generation
 from datetime import datetime
 
+#########################################################
 # Constants
+#########################################################
+
 DESIRED_FPS = 30.0 # 30 frames per second
-ACCEPTED_HATS = [(0,1),(0,-1),(1,0),(-1,0)]
+ACCEPTED_HATS = [(0,1),(0,-1),(1,0),(-1,0)] # HATS are the numpad listed as coordinates
 
-SCREENX = 400
-SCREENY = 600
-ACTIVEBUTTONX = (SCREENX/2)-64 
-ACTIVEBUTTONY = (SCREENY/2)-64 
-CORRECTSCOREX = (SCREENX - 135)
-CORRECTSCOREY = 10
-INCORRECTSCOREX = CORRECTSCOREX
-INCORRECTSCOREY = (CORRECTSCOREY + 20)
-DANCINGSPRITEX = (SCREENX/2)-64 
-DANCINGSPRITEY = (SCREENY-200)
-LEVELX = 0
-LEVELY = 64
+SCREENX = 400 # X size of application
+SCREENY = 600 # Y size of application
+ACTIVEBUTTONX = (SCREENX/2)-64 # X Location of the button, minus button size
+ACTIVEBUTTONY = (SCREENY/2)-64 # Y Location of the button, minus button size
+CORRECTSCOREX = (SCREENX - 135) # X Location of the score
+CORRECTSCOREY = 10 # Y Location of the score
+INCORRECTSCOREX = CORRECTSCOREX # X Location of the incorrect score
+INCORRECTSCOREY = (CORRECTSCOREY + 20) # Y Location of the incorrect score
+DANCINGSPRITEX = (SCREENX/2)-64 # X Location of the dancer
+DANCINGSPRITEY = (SCREENY-200) # Y Location of the dancer
+LEVELX = 0 # X Location of Button
+LEVELY = 64 # Y Location of Button
 
 
-
+###
+# Observer Class
+# This class is the "observer" in the two application system. It will display a "game" to press the correct buttons and the buttons
+# are transmitted to the twin application, the Actor. 
+###
 class Observer():
+    ## Initalizes the Observer class
+    # will go through and set everything up, making sure that everything is prepared in both the game and the networking side
+    # /param ip The IP address the observer application will be connecting to
+    # /param maxLevels The total number of levels that the program is able to run. Defaults to 5. Maximizes at 8.
     def __init__(self, ip, maxLevels = 5):
         #intialize variables
         self.correct = 0
@@ -61,7 +78,6 @@ class Observer():
         self.buttonList = []
         self.level = 0
         self.maxLevels = maxLevels
-        self.correctInARow = 0
         self.enabled = True
 
         #set up random seed based on current time
@@ -78,13 +94,11 @@ class Observer():
         pygame.display.set_caption("Observer") #name the program
 
         pygame.joystick.init() # Initialize the joysticks.
-        if pygame.joystick.get_count() == 0:
+        if pygame.joystick.get_count() == 0: #error check to ensure that a joystick is plugged in.
             print("ERROR: No joystick has been plugged in")
             exit(0)
         self.joystick = pygame.joystick.Joystick(0)
         self.joystick.init()
-
-
 
         #import images
         self.import_images()
@@ -102,6 +116,10 @@ class Observer():
         #level up to select a random button
         self.LevelUp()
 
+
+    ## import images function
+    # loads all images for displaying buttons as well as the "dancer" sprite.
+    # all extra images to be loaded should be loaded in here
     def import_images(self):
         I2 = pygame.image.load('ImageFiles/Buttons/Xbutton.png')
         I3 = pygame.image.load('ImageFiles/Buttons/Ybutton.png')
@@ -243,7 +261,11 @@ class Observer():
         self.wavedance = (dance_wave1, dance_wave2, dance_wave3, dance_wave4, dance_wave5, dance_wave6, dance_wave7, dance_wave8, dance_wave9, dance_wave10)
         self.imagelist = [(0,I0), (1,I1), (2,I2), (3,I3), (10,I4), (11,I5), (12,I6), (13,I7)]
 
-    def display(self):
+
+    ## displays all images needed for the game
+    # blits the pygame game to create the visuals necessary to create the game.
+    # all display should be placed in here
+    def Display(self):
 
         # Set up font
         self.font = pygame.font.Font('comicsans.ttf', 20)
@@ -274,6 +296,10 @@ class Observer():
         currlevel = self.font.render("Level: " + str(self.level), True, (255,255,255))
         self.screen.blit(currlevel, (LEVELX, LEVELY))
 
+
+    ## is the "dance" system for handling the "dancer"
+    # allows the dancer do dance
+    # all dancing related spritework should be placed in here
     def Dance(self,button):
             if button == 0:
                 self.screen.blit(self.crisscrossdance, (DANCINGSPRITEX, DANCINGSPRITEY))
@@ -292,20 +318,36 @@ class Observer():
             elif button == 13:
                 self.screen.blit(self.wavedance, (DANCINGSPRITEX, DANCINGSPRITEY))
 
+
+    ## Changes the buttons to the next desired button
+    # This will randomly pick a new button from the list of available buttons, 
+    # then set the active displayed buttton and active desired button to the
+    # selected button. The display will then be forced to update to ensure the
+    # correct button is displayed.
     def ChangeButton(self):
+        #select the new button from the list
         newButton = random.choice(self.buttonList)
         self.activeButtonImage = (newButton[1])
         self.activeButton = (newButton[0])
 
+        # force update the display
         self.display()
         pygame.display.update()
 
+
+    ## Levels up the game to include new buttons
+    # This resets the score for a given level and increments the level counter.
+    # Additionally this adds a "section" in the excel sheet to seperate this level
+    # from the previous levels. After this, it checks if the level exceeds max levels, then
+    # levels up if so.  Then, it forces the next button to be the new button and forces the
+    # display to update
     def LevelUp(self):
+        # Resets scores and increments levels
         self.level += 1
         self.incorrect = 0
         self.correct = 0
-        self.correctinarow = 0
 
+        # adds new data collection section
         self.df = self.df.append({'Level': self.level}, ignore_index=True)
 
         #if we're above the max number of levels, stop
@@ -316,36 +358,66 @@ class Observer():
             pygame.quit()
             return
 
+        # Randomly select the new button from the available buttons, then remove it from that list
         newButton = random.choice(self.imagelist)
         self.buttonList.append(newButton)
         self.imagelist.remove(newButton)
 
+        # Force the next button to the be new button
         self.activeButtonImage = (newButton[1])
         self.activeButton = (newButton[0])
 
-        self.display()
+        # Force update the display to ensure new button is displayed immedietely
+        self.Display()
         pygame.display.update()
 
+
+    ## Verfies if the recieved button is the correct button
+    # This first checks the time the button has been recieved, then check the
+    # veracity of the button. Then it calls collect data and changes the button
+    # /param button The inputted button
     def VerifyButton(self, button):
+        # check the time between button presses
         self.timeRecieved = int(round(time.time() * 1000))
+
+        # Check the button versus the sent button
         if self.pressedButton == button:
             self.correct += 1
         else:
             self.incorrect += 1
+
+        # Collects data
         self.CollectData(button)
+
+        # Changes the button regardless if correct or not
         self.ChangeButton()
 
-    #updates the pandas dataframe when buttons from observer and actor are recorded
+
+    ## Handles Pandas Data Collection
+    # First converts the button into a valid type, then calculates time total of the button press.
+    # Then updates the Data Frame with the value of the button and it's veracity.
+    # \param button The inputted button
     def CollectData(self, button):
+        # Collect the data for adding to the data frame
         buttonStr = self.ButtonValueConversion(button)
         pressedButtonStr = self.ButtonValueConversion(self.pressedButton)
         timeStamp = self.timeRecieved - self.timePressed
+
+        # check button veracity
         if self.pressedButton == button:
-            self.df = self.df.append({'Intended Button': pressedButtonStr, 'Pressed Button': buttonStr, 'Correct/Incorrect': 'Correct', 'Time': timeStamp}, ignore_index=True)
+            veracity = "Correct"
         else:
-            self.df = self.df.append({'Intended Button': pressedButtonStr, 'Pressed Button': buttonStr, 'Correct/Incorrect': 'Incorrect', 'Time': timeStamp}, ignore_index=True)
-    
-    #Converts the numerical button value to the button name for data collection purposes
+            veracity = "Incorrect"
+
+        # Update the data frame
+        self.df = self.df.append({'Intended Button': pressedButtonStr, 'Pressed Button': buttonStr, 'Correct/Incorrect': veracity, 'Time': timeStamp}, ignore_index=True)
+
+
+    ## Converts button integer values into String values representative of their button
+    # Checks in inputted integer value and converts it among accepted signals.
+    # Additionally checks to ensure that the inputted value is an accepted value
+    # \param button The inputted button
+    # \return The string value of the button inputted
     def ButtonValueConversion(self, button):
         if button == 0:
             return 'A'
@@ -363,13 +435,22 @@ class Observer():
             return 'Left Numpad'
         elif button == 13:
             return 'Up Numpad'
+        else: #error check
+            print("ERROR: Invalid button press")
 
-    #Updates the pandas dataframe with total buttons pressed and exports it to an excel file
+        
+    ## Exports the Pandas Data Frame to a .csv file
+    # Exports the data frame
     def ExportData(self):
-        #self.df[1, 'Total Buttons Pressed'] = self.correct + self.incorrect
+        # exports as a .csv
         self.df.to_csv("Data.csv",index=False)
 
+
+    ## Handles the game tick of the game played.
+    # Enabled or disabled depending on the send/recieve cycle of the Actor/Observer pair.
+    # Then handles all input for the pygame and processes it.
     def game_tick(self):
+        # Check to see if any values should be read
         if self.enabled == True:
             events = pygame.event.get()
             for event in events:
@@ -378,24 +459,24 @@ class Observer():
                 if event.type == pygame.QUIT: # If user clicked close.
                     self.done = True # Flag that we are done so we exit this loop
 
-                elif event.type == pygame.JOYBUTTONDOWN:
-                    # handle button presses, not dpad yet
+                elif event.type == pygame.JOYBUTTONDOWN: # If input on joystick buttons
                     buttons = self.joystick.get_numbuttons()
-                    for i in range(buttons):
-                        button = self.joystick.get_button(i)
-                        if button == 1:
-                            #send the button press to actor.py
-                            if i == self.activeButton:
-                                self.connection.sendButton("O" + str(i))
-                                self.pressedButton = i
-                                self.enabled = False
+                    for i in range(buttons): # Check each button,
+                        button = self.joystick.get_button(i) # Get if button is pressed
+                        if button == 1: #if button is pressed ( == 1)
+                            if i == self.activeButton: # prevent the incorrect button from being sent
+                                #send the button with an attached "O" to mark the file of origin
+                                self.connection.sendButton("O" + str(i)) 
+                                self.pressedButton = i # mark the button as the sent button
+                                self.enabled = False  # disable the game tick
 
-                elif event.type == pygame.JOYHATMOTION:
+                elif event.type == pygame.JOYHATMOTION: # if input on joystick directional pad (HAT)
                     # handle dpad presses
                     hats = self.joystick.get_numhats()
-                    for i in range(hats):
-                        hat = self.joystick.get_hat(i)
-                        if (hat in ACCEPTED_HATS):
+                    for i in range(hats): #check each potential hat pair
+                        hat = self.joystick.get_hat(i) #gets the value
+                        if (hat in ACCEPTED_HATS): #ensure that only the four cardian directions are considered as input
+                            #convert the value of the hat into an integer value for transmission, as opposed to a pair
                             if hat == (0,1):
                                 hatValue = 13
                             elif hat == (0,-1):
@@ -405,53 +486,74 @@ class Observer():
                             elif hat == (-1,0):
                                 hatValue = 12
 
-                            if hatValue == self.activeButton:
-                                #send the hat press to actor.py
+                            if hatValue == self.activeButton: # make sure the button is the correct button
+                                #send the hat press to actor.py with an attached "O" to mark application of origin
                                 self.connection.sendButton("O" + str(hatValue))
-                                self.pressedButton = hatValue
-                                self.enabled = False
+                                self.pressedButton = hatValue # mark the button as the sent button
+                                self.enabled = False #disable game loop
 
-                self.timePressed = int(round(time.time() * 1000))
-                # elif event.type == pygame.JOYBUTTONUP:
-                #button go up :(
-    
+                self.timePressed = int(round(time.time() * 1000)) # Mark the time in milliseconds as the moment the button was pressed
         
+                # if the game is marked as "done"
                 if self.done == True:
                     #quit the game
                     reactor.stop()
                     pygame.quit()
 
-                else:
-                    self.display()
+                else: #update the games visuals
+                    self.Display()
                     pygame.display.update()
 
-
+    
+    ## Allow the gameloop to run again
     def EnableGameLoop(self):
+        # enable the game tick 
         self.enabled = True
 
+    ## Run the observer application
+    # First set up a looping call function to allow the pygame application and twisted reactor to run simultaneously.
+    # If this was not done, then one of the two would hog all processor and prevent the other from running.
     def Run(self):
         # Set up a looping call every 1/30th of a second to run your game tick
+        # This allows the game to run in addition to the server client
         tick = LoopingCall(self.game_tick)
         tick.start(1.0 / DESIRED_FPS)
 
+        # connect the client to the server.
         d = connectProtocol(self.point, self.connection)
         print("observer")
         reactor.run()
 
-# Set up anything else twisted here, like listening sockets
+
+###
+# Observer Protocol Class
+# This class enables a client protocol unique to the Observer application and allows it to handle the correct messages and process
+# recieved messages correctly.
+###
 class ObserverTransmit(Protocol):
 
+    ## Intialize the ObserverTransmit
+    # Prepares the observer transmitter to run correct by connecting the observer and marking the protocol as "unconnected"
+    # \param observer The Observer object the transmit is a part of
     def __init__(self, observer):
         self.observer = observer
         self.connected = False
 
+
+    ## Runs when the ObserverTransmit successfully connects to a server
+    # Sends an "O" to mark the connection as an observer for server side management, then marks
+    # connection as "True"
     def connectionMade(self):
         message = "O"
-        self.transport.write(message.encode("utf-8"))
+        self.transport.write(message.encode("utf-8")) # sends the message of an "O" in byte format
         self.connected = True
 
+
+    ## Runs when data is recieved by this client protocol
+    # First decodes the data from a utf-8 format into a string. Then processes
+    # the recieved transmission and sends it to the correct location
     def dataReceived(self, data):
-        decoded_data = data.decode()
+        decoded_data = data.decode() 
         #ignore the leading character tag of A, read the digits afterwards
         #if all other digits are numeric in value, it's a basic button press
         if decoded_data[1:].isnumeric(): 
@@ -462,20 +564,31 @@ class ObserverTransmit(Protocol):
             self.observer.EnableGameLoop()
             self.observer.LevelUp()
     
+    ## Sends a inputted button press 
+    # Sends a button to the server for redirection to the Actor application
     def sendButton(self, button):
+        # checks if the connection has been established to prevent crashes
         if self.connected:
-            self.transport.write(button.encode("utf-8"))
+            self.transport.write(button.encode("utf-8")) #sends the button
         else:
             print("ERROR: No connection to server established")
 
+
+## Main
+# For running the Observer application
+# ALL VARIABLES THAT CAN BE CHANGED GO IN HERE
 def main():
     #JEREMY: CHANGE "99.28.129.156" INTO "localhost"
     #EVERYONE ELSE: DO THE OPPOSITE OF ABOVE
     #ip = "localhost"
-    ip = "99.28.129.156"
-    maxLevels = 3
-    observer = Observer(ip,maxLevels)
+    ip = "99.28.129.156" # The ip address of the computer hosting "CloudService.py"
+    maxLevels = 3 # The maximum allowed number of levels. This cannot go further than 8 unless additional signals are added
+
+    #create the observer and run it
+    observer = Observer(ip,maxLevels) 
     observer.Run()
+
+    #once the observer is done, export all collected data to a file
     observer.ExportData()
 
 main()

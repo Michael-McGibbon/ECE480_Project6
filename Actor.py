@@ -324,7 +324,6 @@ class ActorTransmit(Protocol):
     def connectionMade(self):
         self.transport.write(b"A")
         self.connected = True
-        pass
 
     def dataReceived(self, data):
         decoded_data = data.decode()

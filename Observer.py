@@ -579,9 +579,8 @@ class ObserverTransmit(Protocol):
 # For running the Observer application
 # ALL VARIABLES THAT CAN BE CHANGED GO IN HERE
 def main():
-    #JEREMY: CHANGE "99.28.129.156" INTO "localhost"
-    #EVERYONE ELSE: DO THE OPPOSITE OF ABOVE
-    #ip = "localhost"
+
+    #ip = "localhost" # If the cloud service is ran on the same computer as this application, this is the ip
     ip = "99.28.129.156" # The ip address of the computer hosting "CloudService.py"
     maxLevels = 3 # The maximum allowed number of levels. This cannot go further than 8 unless additional signals are added
 

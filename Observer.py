@@ -251,16 +251,17 @@ class Observer():
         self.background = pygame.image.load('ImageFiles/background.jpg')
         self.msuhat = pygame.image.load('ImageFiles/msuhat.png')
         
-        self.crisscrossdance = (dance_crisscross1, dance_crisscross2, dance_crisscross3, dance_crisscross4, dance_crisscross5, dance_crisscross6)
-        self.egyptiandance = (dance_egyptian1, dance_egyptian2, dance_egyptian3, dance_egyptian4, dance_egyptian5, dance_egyptian6, dance_egyptian7, dance_egyptian8, dance_egyptian9, dance_egyptian10, dance_egyptian11, dance_egyptian12, dance_egyptian13, dance_egyptian14, dance_egyptian15, dance_egyptian16, dance_egyptian17, dance_egyptian18)
-        self.lawnmowerdance = (dance_lawnmower1, dance_lawnmower2, dance_lawnmower3, dance_lawnmower4, dance_lawnmower5, dance_lawnmower6, dance_lawnmower7, dance_lawnmower8, dance_lawnmower9, dance_lawnmower10, dance_lawnmower11, dance_lawnmower12)
-        self.scubadance = (dance_scuba1, dance_scuba2, dance_scuba3, dance_scuba4, dance_scuba5, dance_scuba6, dance_scuba7, dance_scuba8, dance_scuba9, dance_scuba10, dance_scuba11, dance_scuba12)
-        self.snapdance = (dance_snap1, dance_snap2, dance_snap3, dance_snap4, dance_snap5, dance_snap6, dance_snap7, dance_snap8, dance_snap9, dance_snap10, dance_snap11, dance_snap12)
-        self.splitdance = (dance_split1, dance_split2, dance_split3, dance_split4, dance_split5, dance_split6, dance_split7, dance_split8, dance_split9, dance_split10, dance_split11, dance_split12, dance_split13, dance_split14, dance_split15, dance_split16, dance_split17, dance_split18, dance_split19, dance_split20, dance_split21, dance_split22, dance_split23, dance_split24)
-        self.sprinklerdance = (dance_sprinkler1, dance_sprinkler2, dance_sprinkler3, dance_sprinkler4, dance_sprinkler5, dance_sprinkler6, dance_sprinkler7, dance_sprinkler8)
-        self.wavedance = (dance_wave1, dance_wave2, dance_wave3, dance_wave4, dance_wave5, dance_wave6, dance_wave7, dance_wave8, dance_wave9, dance_wave10)
+        self.crisscrossdance = [dance_crisscross1, dance_crisscross2, dance_crisscross3, dance_crisscross4, dance_crisscross5, dance_crisscross6]
+        self.egyptiandance = [dance_egyptian1, dance_egyptian2, dance_egyptian3, dance_egyptian4, dance_egyptian5, dance_egyptian6, dance_egyptian7, dance_egyptian8, dance_egyptian9, dance_egyptian10, dance_egyptian11, dance_egyptian12, dance_egyptian13, dance_egyptian14, dance_egyptian15, dance_egyptian16, dance_egyptian17, dance_egyptian18]
+        self.lawnmowerdance = [dance_lawnmower1, dance_lawnmower2, dance_lawnmower3, dance_lawnmower4, dance_lawnmower5, dance_lawnmower6, dance_lawnmower7, dance_lawnmower8, dance_lawnmower9, dance_lawnmower10, dance_lawnmower11, dance_lawnmower12]
+        self.scubadance = [dance_scuba1, dance_scuba2, dance_scuba3, dance_scuba4, dance_scuba5, dance_scuba6, dance_scuba7, dance_scuba8, dance_scuba9, dance_scuba10, dance_scuba11, dance_scuba12]
+        self.snapdance = [dance_snap1, dance_snap2, dance_snap3, dance_snap4, dance_snap5, dance_snap6, dance_snap7, dance_snap8, dance_snap9, dance_snap10, dance_snap11, dance_snap12]
+        self.splitdance = [dance_split1, dance_split2, dance_split3, dance_split4, dance_split5, dance_split6, dance_split7, dance_split8, dance_split9, dance_split10, dance_split11, dance_split12, dance_split13, dance_split14, dance_split15, dance_split16, dance_split17, dance_split18, dance_split19, dance_split20, dance_split21, dance_split22, dance_split23, dance_split24]
+        self.sprinklerdance = [dance_sprinkler1, dance_sprinkler2, dance_sprinkler3, dance_sprinkler4, dance_sprinkler5, dance_sprinkler6, dance_sprinkler7, dance_sprinkler8]
+        self.wavedance = [dance_wave1, dance_wave2, dance_wave3, dance_wave4, dance_wave5, dance_wave6, dance_wave7, dance_wave8, dance_wave9, dance_wave10]
         self.imagelist = [(0,I0), (1,I1), (2,I2), (3,I3), (10,I4), (11,I5), (12,I6), (13,I7)]
 
+        self.currentDanceFrame = self.crisscrossdance[0]
 
     ## displays all images needed for the game
     # blits the pygame game to create the visuals necessary to create the game.
@@ -281,8 +282,7 @@ class Observer():
         self.screen.blit(self.activeButtonImage, (ACTIVEBUTTONX, ACTIVEBUTTONY))
 
         #display the dancing sprite
-        self.screen.blit(self.crisscrossdance[0], (DANCINGSPRITEX, DANCINGSPRITEY))
-        time.sleep(.05)
+        self.screen.blit(self.currentDanceFrame, (DANCINGSPRITEX, DANCINGSPRITEY))
         
         #display the correct score 
         corrscore = self.font.render("Correct: " + str(self.correct), True, (255,255,255))
@@ -301,32 +301,61 @@ class Observer():
     # allows the dancer do dance
     # all dancing related spritework should be placed in here
     def Dance(self,button):
+       
             if button == 0:
                 for i in range(0,len(self.crisscrossdance)-1):
-                    self.screen.blit(self.crisscrossdance[i], (DANCINGSPRITEX, DANCINGSPRITEY))
+                    self.currentDanceFrame = self.crisscrossdance[i]
+                    self.Display()
+                    pygame.display.update()
+                    time.sleep(0.1)
             elif button == 1:
                 for i in range(0,len(self.egyptiandance)-1):
-                    self.screen.blit(self.egyptiandance[i] (DANCINGSPRITEX, DANCINGSPRITEY))
+                    self.currentDanceFrame = self.egyptiandance[i]
+                    self.Display()
+                    pygame.display.update()
+                    time.sleep(0.1)
             elif button == 2:
                 for i in range(0,len(self.lawnmowerdance)-1):
-                    self.screen.blit(self.lawnmowerdance[i] (DANCINGSPRITEX, DANCINGSPRITEY))
+                    self.currentDanceFrame = self.lawnmowerdance[i]
+                    self.Display()
+                    pygame.display.update()
+                    time.sleep(0.1)
             elif button == 3: 
                 for i in range(0,len(self.scubadance)-1):
-                    self.screen.blit(self.scubadance[i] (DANCINGSPRITEX, DANCINGSPRITEY))
+                    self.currentDanceFrame = self.scubadance[i]
+                    self.Display()
+                    pygame.display.update()
+                    time.sleep(0.1)
             elif button == 10:
                 for i in range(0,len(self.snapdance)-1):
-                    self.screen.blit(self.snapdance[i] (DANCINGSPRITEX, DANCINGSPRITEY))
+                    self.currentDanceFrame = self.snapdance[i]
+                    self.Display()
+                    pygame.display.update()
+                    time.sleep(0.1)
             elif button == 11:
                 for i in range(0,len(self.splitdance)-1):
-                    self.screen.blit(self.splitdance[i] (DANCINGSPRITEX, DANCINGSPRITEY))
+                    self.currentDanceFrame = self.splitdance[i]
+                    self.Display()
+                    pygame.display.update()
+                    time.sleep(0.1)
             elif button == 12:
                 for i in range(0,len(self.sprinklerdance)-1):
-                    self.screen.blit(self.sprinklerdance[i] (DANCINGSPRITEX, DANCINGSPRITEY))
+                    self.currentDanceFrame = self.sprinklerdance[i]
+                    self.Display()
+                    pygame.display.update()
+                    time.sleep(0.1)
             elif button == 13:
                 for i in range(0,len(self.wavedance)-1):
-                    self.screen.blit(self.wavedance[i] (DANCINGSPRITEX, DANCINGSPRITEY))
+                    self.currentDanceFrame = self.wavedance[i]
+                    self.Display()
+                    pygame.display.update()
+                    time.sleep(0.1)
             #display the default frame of the dancer
-            self.screen.blit(self.crisscrossdance[0], (DANCINGSPRITEX, DANCINGSPRITEY)) 
+            self.currentDanceFrame = self.crisscrossdance[0]
+            self.Display()
+            pygame.display.update()
+            time.sleep(0.1)
+
 
     ## Changes the buttons to the next desired button
     # This will randomly pick a new button from the list of available buttons, 
@@ -392,7 +421,7 @@ class Observer():
         # Check the button versus the sent button
         if self.pressedButton == button:
             self.correct += 1
-            self.Dance()
+            self.Dance(button)
         else:
             self.incorrect += 1
 
@@ -591,8 +620,8 @@ class ObserverTransmit(Protocol):
 # ALL VARIABLES THAT CAN BE CHANGED GO IN HERE
 def main():
 
-    #ip = "localhost" # If the cloud service is ran on the same computer as this application, this is the ip
-    ip = "99.28.129.156" # The ip address of the computer hosting "CloudService.py"
+    ip = "localhost" # If the cloud service is ran on the same computer as this application, this is the ip
+    #ip = "99.28.129.156" # The ip address of the computer hosting "CloudService.py"
     maxLevels = 3 # The maximum allowed number of levels. This cannot go further than 8 unless additional signals are added
 
     #create the observer and run it

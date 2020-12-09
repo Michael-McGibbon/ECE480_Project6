@@ -250,7 +250,7 @@ class Observer():
 
         self.background = pygame.image.load('ImageFiles/background.jpg')
         self.msuhat = pygame.image.load('ImageFiles/msuhat.png')
-
+        
         self.crisscrossdance = (dance_crisscross1, dance_crisscross2, dance_crisscross3, dance_crisscross4, dance_crisscross5, dance_crisscross6)
         self.egyptiandance = (dance_egyptian1, dance_egyptian2, dance_egyptian3, dance_egyptian4, dance_egyptian5, dance_egyptian6, dance_egyptian7, dance_egyptian8, dance_egyptian9, dance_egyptian10, dance_egyptian11, dance_egyptian12, dance_egyptian13, dance_egyptian14, dance_egyptian15, dance_egyptian16, dance_egyptian17, dance_egyptian18)
         self.lawnmowerdance = (dance_lawnmower1, dance_lawnmower2, dance_lawnmower3, dance_lawnmower4, dance_lawnmower5, dance_lawnmower6, dance_lawnmower7, dance_lawnmower8, dance_lawnmower9, dance_lawnmower10, dance_lawnmower11, dance_lawnmower12)
@@ -281,8 +281,8 @@ class Observer():
         self.screen.blit(self.activeButtonImage, (ACTIVEBUTTONX, ACTIVEBUTTONY))
 
         #display the dancing sprite
-        #self.screen.blit(random.choice(self.dance), (DANCINGSPRITEX,DANCINGSPRITEY))
-        #time.sleep(.05)
+        self.screen.blit(self.crisscrossdance[0], (DANCINGSPRITEX, DANCINGSPRITEY))
+        time.sleep(.05)
         
         #display the correct score 
         corrscore = self.font.render("Correct: " + str(self.correct), True, (255,255,255))
@@ -302,22 +302,31 @@ class Observer():
     # all dancing related spritework should be placed in here
     def Dance(self,button):
             if button == 0:
-                self.screen.blit(self.crisscrossdance, (DANCINGSPRITEX, DANCINGSPRITEY))
+                for i in range(0,len(self.crisscrossdance)-1):
+                    self.screen.blit(self.crisscrossdance[i], (DANCINGSPRITEX, DANCINGSPRITEY))
             elif button == 1:
-                self.screen.blit(self.egyptiandance, (DANCINGSPRITEX, DANCINGSPRITEY))
+                for i in range(0,len(self.egyptiandance)-1):
+                    self.screen.blit(self.egyptiandance[i] (DANCINGSPRITEX, DANCINGSPRITEY))
             elif button == 2:
-                self.screen.blit(self.lawnmowerdance, (DANCINGSPRITEX, DANCINGSPRITEY))
+                for i in range(0,len(self.lawnmowerdance)-1):
+                    self.screen.blit(self.lawnmowerdance[i] (DANCINGSPRITEX, DANCINGSPRITEY))
             elif button == 3: 
-                self.screen.blit(self.scubadance, (DANCINGSPRITEX, DANCINGSPRITEY))
+                for i in range(0,len(self.scubadance)-1):
+                    self.screen.blit(self.scubadance[i] (DANCINGSPRITEX, DANCINGSPRITEY))
             elif button == 10:
-                self.screen.blit(self.snapdance, (DANCINGSPRITEX, DANCINGSPRITEY))
+                for i in range(0,len(self.snapdance)-1):
+                    self.screen.blit(self.snapdance[i] (DANCINGSPRITEX, DANCINGSPRITEY))
             elif button == 11:
-                self.screen.blit(self.splitdance, (DANCINGSPRITEX, DANCINGSPRITEY))
+                for i in range(0,len(self.splitdance)-1):
+                    self.screen.blit(self.splitdance[i] (DANCINGSPRITEX, DANCINGSPRITEY))
             elif button == 12:
-                self.screen.blit(self.sprinklerdance, (DANCINGSPRITEX, DANCINGSPRITEY))
+                for i in range(0,len(self.sprinklerdance)-1):
+                    self.screen.blit(self.sprinklerdance[i] (DANCINGSPRITEX, DANCINGSPRITEY))
             elif button == 13:
-                self.screen.blit(self.wavedance, (DANCINGSPRITEX, DANCINGSPRITEY))
-
+                for i in range(0,len(self.wavedance)-1):
+                    self.screen.blit(self.wavedance[i] (DANCINGSPRITEX, DANCINGSPRITEY))
+            #display the default frame of the dancer
+            self.screen.blit(self.crisscrossdance[0], (DANCINGSPRITEX, DANCINGSPRITEY)) 
 
     ## Changes the buttons to the next desired button
     # This will randomly pick a new button from the list of available buttons, 

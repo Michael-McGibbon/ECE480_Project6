@@ -444,7 +444,9 @@ class Observer():
     # Exports the data frame
     def ExportData(self):
         # exports as a .csv
-        self.df.to_csv("Data.csv",index=False)
+        dateTimeObj = datetime.now()
+        name = dateTimeObj.strftime("%d-%b-%Y %H.%M.%S")
+        self.df.to_csv(name,index=False)
 
 
     ## Handles the game tick of the game played.

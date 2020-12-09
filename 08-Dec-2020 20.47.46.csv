@@ -1,0 +1,24 @@
+Level,Intended Button,Pressed Button,Correct/Incorrect,Time
+1.0,,,,
+,Up Numpad,Up Numpad,Correct,1819.0
+,Up Numpad,Up Numpad,Correct,1381.0
+,Up Numpad,Up Numpad,Correct,1243.0
+,Up Numpad,Up Numpad,Correct,1310.0
+,Up Numpad,Up Numpad,Correct,1120.0
+2.0,,,,
+,X,X,Correct,3414.0
+,X,X,Correct,1143.0
+,X,X,Correct,942.0
+,X,X,Correct,1042.0
+,X,X,Correct,1109.0
+,Up Numpad,Up Numpad,Correct,1611.0
+,Up Numpad,Up Numpad,Correct,1510.0
+,Up Numpad,Up Numpad,Correct,1345.0
+3.0,,,,
+,A,A,Correct,1506.0
+,A,A,Correct,1209.0
+,A,A,Correct,1047.0
+,A,A,Correct,1074.0
+,A,A,Correct,1245.0
+,Up Numpad,Down Numpad,Incorrect,1344.0
+4.0,,,,

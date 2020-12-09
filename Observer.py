@@ -331,7 +331,7 @@ class Observer():
         self.activeButton = (newButton[0])
 
         # force update the display
-        self.display()
+        self.Display()
         pygame.display.update()
 
 
@@ -445,7 +445,7 @@ class Observer():
     def ExportData(self):
         # exports as a .csv
         dateTimeObj = datetime.now()
-        name = dateTimeObj.strftime("%d-%b-%Y %H.%M.%S")
+        name = dateTimeObj.strftime("%d-%b-%Y %H.%M.%S.csv")
         self.df.to_csv(name,index=False)
 
 

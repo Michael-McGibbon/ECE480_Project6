@@ -3,7 +3,7 @@ CloudService.py
 
 Cloud service application which will act as a bridge between the Observer and Actor.
 
-Author: Jeremy Cowelchuk
+Authors: Jeremy Cowelchuk, David Geisler, George Legacy, Michael McGibbon, and Pavan Patel
 """
 
 

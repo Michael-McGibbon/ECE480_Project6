@@ -2,7 +2,7 @@
 Actor.py
 Python application for recieving button input from another controller, reading them as vibrations and then sending an interpreted
 signal back to the source controller.
-Author: Jeremy Cowelchuk, (add your names here)
+Authors: Jeremy Cowelchuk, David Geisler, George Legacy, Michael McGibbon, and Pavan Patel
 
 # Background Image: https://depositphotos.com/stock-photos/dancefloor.html?qview=9919783 - Will need to find roalty free :) 
 """

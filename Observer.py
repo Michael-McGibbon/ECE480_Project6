@@ -3,7 +3,7 @@ GameDemo2.py
  
  Python application for running a game and transmitting button presses across a cloud service
     
- Author: Jeremy Cowelchuk, David Geisler, George Legacy, Michael McGibbon (add your names here)
+Authors: Jeremy Cowelchuk, David Geisler, George Legacy, Michael McGibbon, and Pavan Patel
 
  
 # Button Icons from: https://www.nicepng.com/ourpic/u2w7i1i1u2q8q8a9_xbox-360-icon-opengameart-xbox-controller-button-icons/ - In the process of being made ourselves :)
